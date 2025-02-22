@@ -275,8 +275,6 @@ public class ThirdPersonController : MonoBehaviour
             else
             { _speed = targetSpeed; }
 
-            // normalise input direction
-
             // if there is a move input rotate player when the player is moving
             if (_input.move != Vector2.zero)
             {
@@ -293,6 +291,7 @@ public class ThirdPersonController : MonoBehaviour
         }
         else if (isDash == true)    //Dash Movement
         {
+            // _input.move = Vector2.zero;
             targetSpeed = DashSpeed;
             // accelerate or decelerate to target speed
             if (currentHorizontalSpeed < targetSpeed - speedOffset || currentHorizontalSpeed > targetSpeed + speedOffset)
@@ -386,11 +385,11 @@ public class ThirdPersonController : MonoBehaviour
 
             float angle = Vector3.Angle(result, transform.forward);
 
-            // Debug.Log("輸入角度:" + vectorinputXZ);
-            // Debug.Log("角色面向角度:" + transform.forward);
-            // Debug.Log("相機角度:" + _mainCamera.transform.forward);
+            // Debug.Log("Input angle:" + vectorinputXZ);
+            // Debug.Log("Character facing angle:" + transform.forward);
+            // Debug.Log("Camera angle:" + _mainCamera.transform.forward);
 
-            Debug.Log("Player Dashed 夾角是: " + angle + " 度");
+            Debug.Log("Player Dashed with an angle of: " + angle + " degrees");
 
             _input.Dash = false;
             _DashTimeoutDelta = DashTimeout;
