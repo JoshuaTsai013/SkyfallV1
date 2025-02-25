@@ -1,8 +1,6 @@
 using System.Collections;
 using UnityEngine;
-using UnityEngine.PlayerLoop;
 using UnityEngine.VFX;
-using UnityEngine.Audio;
 
 public class MinionGun : MonoBehaviour
 {
@@ -22,10 +20,10 @@ public class MinionGun : MonoBehaviour
     private float LastShootTime;
     public AudioSource shootSound;
 
-    private void Update()
-    {
-        Shoot();
-    }
+    // private void Update()
+    // {
+    //     Shoot();
+    // }
     public void Shoot()
     {
         if (LastShootTime + ShootDelay < Time.time)
@@ -35,10 +33,6 @@ public class MinionGun : MonoBehaviour
             StartCoroutine(SpawnTrail(trail, direction));
             ShootingSystem.Play();
             AudioSource.PlayClipAtPoint(shootSound.clip, transform.position);
-            // trail.GetComponent<Rigidbody>().velocity = direction * Speed;
-            // trail.GetComponent<Attacker>().damage = Damage;
-            // trail.GetComponent<MinionBullet>().GunRoot = GunRoot;
-
             LastShootTime = Time.time;
         }
     }
