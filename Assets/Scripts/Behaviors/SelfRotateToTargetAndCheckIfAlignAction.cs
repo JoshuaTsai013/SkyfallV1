@@ -4,10 +4,9 @@ using UnityEngine;
 using Action = Unity.Behavior.Action;
 using Unity.Properties;
 
-
 [Serializable, GeneratePropertyBag]
-[NodeDescription(name: "Self rotate to target", story: "[Agent] rotate toward [Target] over [time] sec", category: "Action/MyActions", id: "07bda80912d97a85fb2e90438689cf6c")]
-public partial class SelfRotateToTargetAction : Action
+[NodeDescription(name: "Self rotate to target and check if align", story: "[Agent] rotate toward [Target] over [time] sec and check if align", category: "Action/MyActions", id: "803d0296ef9c6420f20aa09ed271d4c7")]
+public partial class SelfRotateToTargetAndCheckIfAlignAction : Action
 {
     [SerializeReference] public BlackboardVariable<GameObject> Agent;
     [SerializeReference] public BlackboardVariable<GameObject> Target;
@@ -39,7 +38,7 @@ public partial class SelfRotateToTargetAction : Action
             UnityEngine.Time.deltaTime * 360 / Time.Value
         );
 
-        if (_elapsedTime <= 0)
+        if (Quaternion.Angle(Agent.Value.transform.rotation, targetRotation) < 0.1f && _elapsedTime <= 0)
         {
             return Status.Success;
         }
