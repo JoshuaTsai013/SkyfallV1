@@ -3,11 +3,16 @@ using DG.Tweening;
 using System.Collections;
 using UnityEngine.SceneManagement;
 using System;
+using UnityEngine.UI;
+using UnityEngine.EventSystems;
+using Unity.VisualScripting;
 
 public class PauseMenu : MonoBehaviour
 {
     [SerializeField] private CanvasGroup _pauseMenuUI;
     [SerializeField] private FadeOutTransitionScreen _fadeOutTransitionScreen;
+    [SerializeField] private EventSystem _eventSystem;
+    [SerializeField] private Selectable _firstSelectedButton;
     private bool _isPaused = false;
     private bool _canToggle = true; // Add a flag to control toggling
     private ThirdPersonController _playerController;
@@ -17,6 +22,7 @@ public class PauseMenu : MonoBehaviour
     {
         _playerController = PlayerManager.instance.player.GetComponent<ThirdPersonController>();
         _playerShooterController = PlayerManager.instance.player.GetComponent<ThirdPersonShooterController>();
+        _eventSystem.gameObject.SetActive(false);
     }
 
     public void TogglePauseMenu()
@@ -26,7 +32,6 @@ public class PauseMenu : MonoBehaviour
         {
             OpenPauseMenu();
             Debug.Log("Opening Pause Menu");
-
         }
         else
         {
@@ -48,6 +53,8 @@ public class PauseMenu : MonoBehaviour
         {
             return;
         }
+        _eventSystem.gameObject.SetActive(true);
+        _eventSystem.SetSelectedGameObject(_firstSelectedButton.gameObject);
         _playerController.enabled = false;
         _playerShooterController.enabled = false;
         _pauseMenuUI.DOFade(1, 0.05f);
@@ -62,13 +69,20 @@ public class PauseMenu : MonoBehaviour
         {
             return;
         }
-        _playerController.enabled = true;
+        _eventSystem.gameObject.SetActive(false);
         _playerShooterController.enabled = true;
         _pauseMenuUI.DOFade(0, 0.05f);
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
         Time.timeScale = 1.0f;
+        StartCoroutine(ResumeGameDelay());
         _isPaused = false;
+    }
+
+    private IEnumerator ResumeGameDelay()
+    {
+        yield return new WaitForSecondsRealtime(0.2f); // Wait for 0.2 seconds in real-time
+        _playerController.enabled = true;
     }
 
     public void RestartGame()
