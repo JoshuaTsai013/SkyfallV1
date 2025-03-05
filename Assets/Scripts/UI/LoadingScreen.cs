@@ -10,7 +10,6 @@ public class LoadingScreen : MonoBehaviour
 {
     public CanvasGroup loadingScreen;
     public CanvasGroup loadingText;
-    public ParticleSystem loadingParticles;
     public VisualEffect loadingVfx;
     public ParticleSystem StartParticles;
     public AudioSource buttonSound;
@@ -50,11 +49,7 @@ public class LoadingScreen : MonoBehaviour
         StartParticles.Stop();
         StartText.DOFade(0, 0.5f);
         Title.DOFade(0, 0.5f);
-        loadingParticles.Play();
-        
-        // await UniTask.Delay(1000, cancellationToken: cancellation);
         loadingScreen.DOFade(1, 2f);
-        
         await UniTask.Delay(1000, cancellationToken: cancellation);
         loadingText.DOFade(1, 1f);
         loadingVfx.Play();
@@ -65,5 +60,18 @@ public class LoadingScreen : MonoBehaviour
     {
         SceneManager.LoadSceneAsync(sceneIndex);
         yield return null;
+    }
+
+    public void QuitGame()
+    {
+        StartCoroutine(QuitGameDelay()); // Start the delay coroutine
+    }
+
+    private IEnumerator QuitGameDelay()
+    {
+        Title.DOFade(0, 0.5f);
+        StartText.DOFade(0, 0.5f);
+        yield return new WaitForSecondsRealtime(3.0f); // Wait for 0.2 seconds in real-time
+        Application.Quit();
     }
 }
