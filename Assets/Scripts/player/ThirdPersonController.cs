@@ -370,7 +370,7 @@ public class ThirdPersonController : MonoBehaviour
             {
                 _DashDurationDelta = DashDuration;
             }
-            _animator.SetBool("Dash", true);
+            _animator.SetTrigger("Dash");
             heat.AddDashHeat();
             JumpEffect3.Play();
             JumpEffect4.Play();
@@ -383,8 +383,10 @@ public class ThirdPersonController : MonoBehaviour
             Quaternion cameraLookRotation = Quaternion.LookRotation(_mainCamera.transform.forward);
             Vector3 result = cameraLookRotation * vectorinputXZ;
 
+            // float angle = Vector3.Angle(result, transform.forward);
             float angle = Vector3.Angle(result, transform.forward);
-
+            angle *= _inputDirectionLastTime.normalized.x;
+            _animator.SetFloat("DashAngle", angle);
             // Debug.Log("Input angle:" + vectorinputXZ);
             // Debug.Log("Character facing angle:" + transform.forward);
             // Debug.Log("Camera angle:" + _mainCamera.transform.forward);
@@ -411,7 +413,7 @@ public class ThirdPersonController : MonoBehaviour
 
                 _input.Dash = false;
                 isDash = false;
-                _animator.SetBool("Dash", false);
+                // _animator.SetBool("Dash", false);
                 JumpEffect3.Stop();
                 JumpEffect4.Stop();
 

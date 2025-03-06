@@ -44,7 +44,7 @@ public class MinionGun : MonoBehaviour
         if (Trail.TryGetComponent<Rigidbody>(out var rb))
         {
             rb.linearVelocity = _direction * Speed;
-            Debug.Log("Bullet apply velocity");
+            // Debug.Log("Bullet apply velocity");
         }
         if (Trail.TryGetComponent<Attacker>(out var attacker))
         {
