@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.VFX;
 
 public class PlayerManager : MonoBehaviour
 {
@@ -12,5 +13,10 @@ public class PlayerManager : MonoBehaviour
 
   public GameObject player;
   public GameObject PlayerCamera;
+  public VisualEffect FlameBackRight;
+  public VisualEffect FlameBackLeft;
+  public VisualEffect FlameSideRight;
+  public VisualEffect FlameSideLeft;
+  public VisualEffect FlameDrill;
 
 }

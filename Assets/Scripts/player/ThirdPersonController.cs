@@ -51,10 +51,10 @@ public class ThirdPersonController : MonoBehaviour
     public bool CanJump = true; //will be set to false when player is not on ground and overheat
     [Tooltip("Player started Jump")]
     public bool isJump = false;
-    public VisualEffect JumpEffect1;
-    public VisualEffect JumpEffect2;
-    public VisualEffect JumpEffect3;
-    public VisualEffect JumpEffect4;
+    // public VisualEffect JumpEffect1;
+    // public VisualEffect JumpEffect2;
+    // public VisualEffect JumpEffect3;
+    // public VisualEffect JumpEffect4;
 
 
     [Tooltip("The character uses its own gravity value. The engine default is -9.81f")]
@@ -124,15 +124,10 @@ public class ThirdPersonController : MonoBehaviour
     private PlayerInput _playerInput;
     public Animator _animator;
     private CharacterController _controller;
-
     private PlayerInputs _input;  //Created by me
-
     private Vector3 _inputDirectionLastTime;
     private GameObject _mainCamera;
-
-
     private Heat heat;
-
     private const float _threshold = 0.01f;
     private bool IsCurrentDeviceMouse
     {
@@ -159,9 +154,6 @@ public class ThirdPersonController : MonoBehaviour
         _input = GetComponent<PlayerInputs>();
 
         _playerInput = GetComponent<PlayerInput>();
-
-
-
 
         heat = PlayerManager.instance.player.GetComponent<Heat>();
         _rotationSmoothTime = RotationSmoothTimeOnGround;
@@ -203,9 +195,6 @@ public class ThirdPersonController : MonoBehaviour
             MoveSpeed = MoveSpeedOnGround;
             //reset the Rotation speed on ground
             _rotationSmoothTime = RotationSmoothTimeOnGround;
-
-
-
 
             // stop our velocity dropping infinitely when grounded
             if (_verticalVelocity < 0.0f)
@@ -372,8 +361,8 @@ public class ThirdPersonController : MonoBehaviour
             }
             _animator.SetTrigger("Dash");
             heat.AddDashHeat();
-            JumpEffect3.Play();
-            JumpEffect4.Play();
+            // JumpEffect3.Play();
+            // JumpEffect4.Play();
             SoundManager.PlaySound(SoundType.Dash, 0.2f);
             // CanJump = false; 
             // Disable jumping while dashing
@@ -414,8 +403,8 @@ public class ThirdPersonController : MonoBehaviour
                 _input.Dash = false;
                 isDash = false;
                 // _animator.SetBool("Dash", false);
-                JumpEffect3.Stop();
-                JumpEffect4.Stop();
+                // JumpEffect3.Stop();
+                // JumpEffect4.Stop();
 
                 // CanJump = true;
                 // Re-enable jumping after dashing
@@ -491,13 +480,13 @@ public class ThirdPersonController : MonoBehaviour
             // reset the fall timeout timer
             _fallTimeoutDelta = FallTimeout;
             _animator.SetBool("FreeFall", false);
-            JumpEffect1.Stop();
-            JumpEffect2.Stop();
+            // JumpEffect1.Stop();
+            // JumpEffect2.Stop();
         }
         else
         {
-            JumpEffect1.Play();
-            JumpEffect2.Play();
+            // JumpEffect1.Play();
+            // JumpEffect2.Play();
             // fall timeout
             if (_fallTimeoutDelta >= 0.0f)
             {

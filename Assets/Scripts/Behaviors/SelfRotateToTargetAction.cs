@@ -12,6 +12,7 @@ public partial class SelfRotateToTargetAction : Action
     [SerializeReference] public BlackboardVariable<GameObject> Agent;
     [SerializeReference] public BlackboardVariable<GameObject> Target;
     [SerializeReference] public BlackboardVariable<float> Time;
+    [SerializeReference] public BlackboardVariable<bool> RotationLockOnYaxis;
 
     private float _elapsedTime = 0;
 
@@ -30,8 +31,11 @@ public partial class SelfRotateToTargetAction : Action
         _elapsedTime -= UnityEngine.Time.deltaTime;
 
         Vector3 direction = Target.Value.transform.position - Agent.Value.transform.position;
-        // direction.y = 0; 
-        // Keep only the horizontal direction
+        if (RotationLockOnYaxis.Value)
+        {
+            // Keep only the horizontal direction
+            direction.y = 0;
+        }
         Quaternion targetRotation = Quaternion.LookRotation(direction);
         Agent.Value.transform.rotation = Quaternion.RotateTowards(
             Agent.Value.transform.rotation,

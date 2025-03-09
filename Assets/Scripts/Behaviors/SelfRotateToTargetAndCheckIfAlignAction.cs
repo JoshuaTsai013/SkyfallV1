@@ -29,7 +29,7 @@ public partial class SelfRotateToTargetAndCheckIfAlignAction : Action
         _elapsedTime -= UnityEngine.Time.deltaTime;
 
         Vector3 direction = Target.Value.transform.position - Agent.Value.transform.position;
-        // direction.y = 0; 
+        direction.y = 0; 
         // Keep only the horizontal direction
         Quaternion targetRotation = Quaternion.LookRotation(direction);
         Agent.Value.transform.rotation = Quaternion.RotateTowards(
