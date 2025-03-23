@@ -19,12 +19,14 @@ public class LineOfSightDetector : MonoBehaviour
             direction, out RaycastHit hit, _detectionRange);
         if (showDebugVisuals && enabled)
         {
-            Debug.DrawRay(transform.position + Vector3.up * _detectionHeight, direction.normalized * _detectionRange, Color.white);
+            Debug.DrawRay(transform.position + Vector3.up * _detectionHeight, direction * _detectionRange, Color.white);
         }
 
 
         if (hit.collider != null && hit.collider.gameObject == potentialTarget)
         {
+
+            Debug.Log("Player Detected");
             if (showDebugVisuals && enabled)
             {
                 Debug.DrawLine(transform.position + Vector3.up * _detectionHeight,

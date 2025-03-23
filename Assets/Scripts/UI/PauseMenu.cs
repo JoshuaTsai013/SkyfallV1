@@ -23,6 +23,7 @@ public class PauseMenu : MonoBehaviour
         _playerController = PlayerManager.instance.player.GetComponent<ThirdPersonController>();
         _playerShooterController = PlayerManager.instance.player.GetComponent<ThirdPersonShooterController>();
         _eventSystem.gameObject.SetActive(false);
+        _pauseMenuUI.gameObject.SetActive(false);
     }
 
     public void TogglePauseMenu()
@@ -53,6 +54,7 @@ public class PauseMenu : MonoBehaviour
         {
             return;
         }
+        
         _eventSystem.gameObject.SetActive(true);
         _eventSystem.SetSelectedGameObject(_firstSelectedButton.gameObject);
         _playerController.enabled = false;
@@ -60,8 +62,10 @@ public class PauseMenu : MonoBehaviour
         _pauseMenuUI.DOFade(1, 0.05f);
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.None;
-        Time.timeScale = 0.1f;
+        // Time.timeScale = 0.1f;
+        _pauseMenuUI.gameObject.SetActive(true);
         _isPaused = true;
+        
     }
     public void ClosePauseMenu()
     {
@@ -69,6 +73,7 @@ public class PauseMenu : MonoBehaviour
         {
             return;
         }
+        
         _eventSystem.gameObject.SetActive(false);
         _playerShooterController.enabled = true;
         _pauseMenuUI.DOFade(0, 0.05f);
@@ -76,6 +81,7 @@ public class PauseMenu : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         Time.timeScale = 1.0f;
         StartCoroutine(ResumeGameDelay());
+        _pauseMenuUI.gameObject.SetActive(false);
         _isPaused = false;
     }
 

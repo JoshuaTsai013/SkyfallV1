@@ -6,7 +6,8 @@ public enum SoundType
     Overheated,
     Jump,
     Landing,
-    Footstep
+    Footstep,
+    Drill
 }
 
 [RequireComponent(typeof(AudioSource))]

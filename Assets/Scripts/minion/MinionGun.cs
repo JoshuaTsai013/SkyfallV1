@@ -25,7 +25,8 @@ public class MinionGun : MonoBehaviour
     // }
     public void Shoot(Transform target)
     {
-        Vector3 direction = target.position - GunRoot.position;
+        Vector3 direction = target.position - GunRoot.position + new Vector3(0, 3.5f, 0);
+        direction.Normalize();
         TrailRenderer trail = Instantiate(BulletTrail, GunRoot.position, Quaternion.identity);
         StartCoroutine(SpawnTrail(trail, direction));
         ShootingSystem.Play();

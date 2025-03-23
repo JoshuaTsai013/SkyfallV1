@@ -9,7 +9,7 @@ public class Drill : MonoBehaviour
     private void Start()
     {
         // Set the drill to stop
-        DrillStop();
+        _isDrilling = false;
         _drillParticles.Stop();
     }
     public void DrillStart()
@@ -17,6 +17,8 @@ public class Drill : MonoBehaviour
         _isDrilling = true;
         // Rotate the drill
         _drillParticles.Play();
+        SoundManager.PlaySound(SoundType.Drill, 0.3f);
+        
 
     }
 
@@ -24,6 +26,7 @@ public class Drill : MonoBehaviour
     {
         _isDrilling = false;
         _drillParticles.Stop();
+        SoundManager.PlaySound(SoundType.Dash, 0.1f);
     }
 
     private void Update()

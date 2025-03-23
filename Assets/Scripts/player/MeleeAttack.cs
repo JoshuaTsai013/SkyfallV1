@@ -22,7 +22,6 @@ public class MeleeAttack : MonoBehaviour
     private CharacterController _controller;
     private ThirdPersonController _playerController;
     private ThirdPersonShooterController _playerShooterController;
-    [SerializeField]
     private CinemachineImpulseSource _impulseSource;
     [SerializeField]
     private GameObject _meleeCollider;
@@ -33,6 +32,7 @@ public class MeleeAttack : MonoBehaviour
         _controller = GetComponent<CharacterController>();
         _playerController = PlayerManager.instance.player.GetComponent<ThirdPersonController>();
         _playerShooterController = PlayerManager.instance.player.GetComponent<ThirdPersonShooterController>();
+        _impulseSource = PlayerManager.instance.PlayerCamera.GetComponent<CinemachineImpulseSource>();
         _meleeCollider.SetActive(false);
         CanMelee = true;
     }
@@ -63,6 +63,7 @@ public class MeleeAttack : MonoBehaviour
         meleeCam.SetActive(true);
         _impulseSource.GenerateImpulse();
         _drill.DrillStart();
+        
         Debug.Log("Melee Attack!!");
         yield return new WaitForSeconds(ChargeDuration);
         //drillingForward
