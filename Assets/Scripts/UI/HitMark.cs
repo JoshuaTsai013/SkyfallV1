@@ -16,11 +16,11 @@ public class HitMark : MonoBehaviour
     }
     public void ShowHitMark()
     {
-        _hitMarkText.SetText(characterGeneral.currentHealth.ToString());
+        _hitMarkText.SetText(characterGeneral.damageLastTime.ToString());
         _hitMarkText.CrossFadeAlpha(1, 0.1f, false);
         _hitMarkText.transform.DOScale(1.5f, 0.1f).OnComplete(() =>
         {
-            _hitMarkText.CrossFadeAlpha(0, 0.5f, false);
+            _hitMarkText.CrossFadeAlpha(0, 0.3f, false);
             _hitMarkText.transform.DOScale(1, 0.5f);
         });
     }

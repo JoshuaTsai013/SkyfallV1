@@ -12,6 +12,7 @@ public class CharacterGeneral : MonoBehaviour
     public float maxHeat = 100;
     public float currentHeat = 0;
     public float HeatPercentage => currentHeat / maxHeat;
+    public float damageLastTime = 0;
 
     [Header("Character Events")]
     public UnityEvent OnDie;
@@ -28,6 +29,7 @@ public class CharacterGeneral : MonoBehaviour
     public void TakeDamage(Attacker attacker)
     {
         currentHealth -= attacker.damage;
+        damageLastTime = attacker.damage;
         Hit();
         if (currentHealth <= 0)
         {
