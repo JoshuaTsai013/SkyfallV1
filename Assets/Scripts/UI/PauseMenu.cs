@@ -2,27 +2,26 @@ using UnityEngine;
 using DG.Tweening;
 using System.Collections;
 using UnityEngine.SceneManagement;
-using System;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
-using Unity.VisualScripting;
+using UnityEngine.InputSystem;
 
 public class PauseMenu : MonoBehaviour
 {
     [SerializeField] private CanvasGroup _pauseMenuUI;
     [SerializeField] private FadeOutTransitionScreen _fadeOutTransitionScreen;
-    [SerializeField] private EventSystem _eventSystem;
     [SerializeField] private Selectable _firstSelectedButton;
     private bool _isPaused = false;
     private bool _canToggle = true; // Add a flag to control toggling
     private ThirdPersonController _playerController;
     private ThirdPersonShooterController _playerShooterController;
+    private PlayerInput _playerInput;
 
     private void Start()
     {
         _playerController = PlayerManager.instance.player.GetComponent<ThirdPersonController>();
         _playerShooterController = PlayerManager.instance.player.GetComponent<ThirdPersonShooterController>();
-        _eventSystem.gameObject.SetActive(false);
+        _playerInput = PlayerManager.instance.player.GetComponent<PlayerInput>();
         _pauseMenuUI.gameObject.SetActive(false);
     }
 
@@ -54,9 +53,8 @@ public class PauseMenu : MonoBehaviour
         {
             return;
         }
-        
-        _eventSystem.gameObject.SetActive(true);
-        _eventSystem.SetSelectedGameObject(_firstSelectedButton.gameObject);
+        _playerInput.enabled = false; // Disable player input actions
+        EventSystem.current.SetSelectedGameObject(_firstSelectedButton.gameObject);
         _playerController.enabled = false;
         _playerShooterController.enabled = false;
         _pauseMenuUI.DOFade(1, 0.05f);
@@ -73,8 +71,7 @@ public class PauseMenu : MonoBehaviour
         {
             return;
         }
-        
-        _eventSystem.gameObject.SetActive(false);
+        _playerInput.enabled = true; // Enable player input actions
         _playerShooterController.enabled = true;
         _pauseMenuUI.DOFade(0, 0.05f);
         Cursor.visible = false;
