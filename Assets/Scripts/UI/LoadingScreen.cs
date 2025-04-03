@@ -22,6 +22,7 @@ public class LoadingScreen : MonoBehaviour
     {
         RunTitle(destroyCancellationToken).Forget();
         loadingVfx.Stop();
+        sceneCanChange = true;
     }
     async UniTask RunTitle(CancellationToken cancellation)
     {
@@ -34,15 +35,21 @@ public class LoadingScreen : MonoBehaviour
         sceneCanChange = true;
     }
 
-    private void Update()
-    {
-        if (Input.anyKeyDown && sceneCanChange)
-        {
-            sceneCanChange = false;
-            buttonSound.Play();
+    // private void Update()
+    // {
+    //     if (Input.anyKeyDown && sceneCanChange)
+    //     {
+    //         sceneCanChange = false;
+    //         buttonSound.Play();
 
-            RunToLoading(destroyCancellationToken).Forget();
-        }
+    //         RunToLoading(destroyCancellationToken).Forget();
+    //     }
+    // }
+    public void StartGame()
+    {
+        sceneCanChange = false;
+        buttonSound.Play();
+        RunToLoading(destroyCancellationToken).Forget();
     }
     async UniTask RunToLoading(CancellationToken cancellation)
     {
