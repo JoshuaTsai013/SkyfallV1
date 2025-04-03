@@ -4,13 +4,19 @@ using UnityEngine.VFX;
 public class PlayerManager : MonoBehaviour
 {
   #region Singleton
-   public static PlayerManager instance;
-    void  Awake()
+  public static PlayerManager instance;
+  private void Awake()
+  {
+    if (instance == null)
     {
-        instance = this;
+      instance = this;
+      DontDestroyOnLoad(gameObject);
     }
+    else
+      Destroy(gameObject);
+  }
   #endregion
-
+  public PlayerStats playerStats;
   public GameObject player;
   public GameObject PlayerCamera;
   public VisualEffect FlameBackRight;

@@ -17,12 +17,11 @@ public class LoadingScreen : MonoBehaviour
     public CanvasGroup StartText;
     [SerializeField]
     private int sceneIndex;
-    private bool sceneCanChange = false;
+
     private void Start()
     {
         RunTitle(destroyCancellationToken).Forget();
         loadingVfx.Stop();
-        sceneCanChange = true;
     }
     async UniTask RunTitle(CancellationToken cancellation)
     {
@@ -32,22 +31,9 @@ public class LoadingScreen : MonoBehaviour
         await UniTask.Delay(1000, cancellationToken: cancellation);
         StartText.DOFade(1, 1f);
         await UniTask.Delay(1000, cancellationToken: cancellation);
-        sceneCanChange = true;
     }
-
-    // private void Update()
-    // {
-    //     if (Input.anyKeyDown && sceneCanChange)
-    //     {
-    //         sceneCanChange = false;
-    //         buttonSound.Play();
-
-    //         RunToLoading(destroyCancellationToken).Forget();
-    //     }
-    // }
     public void StartGame()
     {
-        sceneCanChange = false;
         buttonSound.Play();
         RunToLoading(destroyCancellationToken).Forget();
     }

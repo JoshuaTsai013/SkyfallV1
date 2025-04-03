@@ -8,6 +8,8 @@ public class Gun : MonoBehaviour
     [SerializeField]
     private VisualEffect ShootingSystem;
     [SerializeField]
+    private ParticleSystem bulletShell;
+    [SerializeField]
     private Transform _GunRoot;
     [SerializeField]
     private Transform AimTransform;
@@ -30,6 +32,7 @@ public class Gun : MonoBehaviour
     private Vector3 _BulletDirection;
 
     private CinemachineImpulseSource _impulseSource;
+    private int _BulletAmount = 30; // Amount of ammo available
 
     private void Start()
     {
@@ -42,6 +45,9 @@ public class Gun : MonoBehaviour
         {
             ShootingSystem.Play();
             SoundManager.PlaySound(SoundType.SingleShot, 0.1f);
+            PlayBulletShell();
+            _BulletAmount--;
+
             _impulseSource.GenerateImpulse();
             _BulletDirection = NoAimTransform.forward;
             if (isAiming)
@@ -64,6 +70,15 @@ public class Gun : MonoBehaviour
             LastShootTime = Time.time;
         }
     }
+
+    private void PlayBulletShell()
+    {
+        _ = bulletShell.emission;
+        // bulletShell.Play();
+        bulletShell.Emit(1); // Emits 20 particles instantly
+    }
+
+    
 
     private IEnumerator SpawnTrail(TrailRenderer Trail, Vector3 HitPoint, Vector3 HitNormal, bool MadeImpact)
     {
