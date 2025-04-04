@@ -13,9 +13,12 @@ public class Heat : MonoBehaviour
     public float OverheatColdDownRate = 0.1f;
     private bool _canColdDown = false;
 
+    private PlayerStats _playerStats;
+
     void Start()
     {
         currentHeat = 0;
+        _playerStats = PlayerManager.instance.playerStats;
     }
 
     public void AddJumpHeat()
@@ -65,6 +68,7 @@ public class Heat : MonoBehaviour
                 Overheated = false;
             }
         }
+        _playerStats.HeatPercentage = HeatPercentage;
     }
     private void CanColdDownAfterOverheat()
     {

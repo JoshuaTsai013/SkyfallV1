@@ -23,6 +23,7 @@ public class TrainingManager : MonoBehaviour
         Dash.gameObject.SetActive(false);
         Shoot.gameObject.SetActive(false);
         Exit.gameObject.SetActive(false);
+        // PlayerManager.instance.player.transform.SetPositionAndRotation(gameObject.transform.position, gameObject.transform.rotation);
     }
     void Update()
     {

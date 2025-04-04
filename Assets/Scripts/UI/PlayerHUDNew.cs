@@ -10,28 +10,21 @@ public class PlayerHUDNew : MonoBehaviour
   public TextMeshProUGUI HealthText;
   public TextMeshProUGUI AmmoText;
   public TextMeshProUGUI RepairText;
-  public int AmmoAmount;
-  public int RepairAmount;
-  GameObject player;
-  CharacterGeneral characterGeneral;
-  Heat heat;
+  PlayerStats _playerStats;
   private void Start()
   {
-    player = PlayerManager.instance.player;
-    characterGeneral = player.GetComponent<CharacterGeneral>();
-    heat = player.GetComponent<Heat>();
-
+    _playerStats = PlayerManager.instance.playerStats;
     BloodBar.fillAmount = 1;
     SetHeatBar(0);
     SetBloodText(1);
   }
   private void FixedUpdate()
   {
-    SetHeatBar(heat.HeatPercentage);
-    BloodBar.fillAmount = characterGeneral.HealthPercentage;
-    SetBloodText(characterGeneral.HealthPercentage);
-    SetAmmoText(AmmoAmount);
-    SetRepairText(RepairAmount);
+    SetHeatBar(_playerStats.HeatPercentage);
+    BloodBar.fillAmount = _playerStats.HealthPercentage;
+    SetBloodText(_playerStats.HealthPercentage);
+    SetAmmoText(_playerStats.AmmoAmount);
+    SetRepairText(_playerStats.RepairAmount);
   }
   private void SetHeatBar(float value)
   {

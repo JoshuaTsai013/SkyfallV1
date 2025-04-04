@@ -28,25 +28,30 @@ public class Gun : MonoBehaviour
     [SerializeField]
     private LayerMask Mask;
     private float LastShootTime;
-
     private Vector3 _BulletDirection;
-
     private CinemachineImpulseSource _impulseSource;
-    private int _BulletAmount = 30; // Amount of ammo available
+    private PlayerStats _playerStats;
+
 
     private void Start()
     {
         _impulseSource = PlayerManager.instance.PlayerCamera.GetComponent<CinemachineImpulseSource>();
+        _playerStats = PlayerManager.instance.playerStats;
     }
 
     public void Shoot(bool isAiming)
     {
+        if (_playerStats.AmmoAmount <= 0)
+        {
+            _playerStats.AmmoAmount = 0;
+            return;
+        }
         if (LastShootTime + ShootDelay < Time.time)
         {
             ShootingSystem.Play();
             SoundManager.PlaySound(SoundType.SingleShot, 0.1f);
             PlayBulletShell();
-            _BulletAmount--;
+            _playerStats.AmmoAmount--;
 
             _impulseSource.GenerateImpulse();
             _BulletDirection = NoAimTransform.forward;
@@ -78,7 +83,7 @@ public class Gun : MonoBehaviour
         bulletShell.Emit(1); // Emits 20 particles instantly
     }
 
-    
+
 
     private IEnumerator SpawnTrail(TrailRenderer Trail, Vector3 HitPoint, Vector3 HitNormal, bool MadeImpact)
     {

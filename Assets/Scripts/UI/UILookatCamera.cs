@@ -4,7 +4,7 @@ public class UILookatCamera : MonoBehaviour
 {
     [SerializeField]
     private GameObject _mainCamera;
-    private void Awake()
+    private void Start()
     {
         // get a reference to our main camera
         if (_mainCamera == null)
