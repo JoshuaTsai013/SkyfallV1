@@ -20,8 +20,23 @@ public class PauseMenu : MonoBehaviour
     private void Start()
     {
         _playerController = PlayerManager.instance.player.GetComponent<ThirdPersonController>();
+        if (_playerController == null)
+        {
+            Debug.LogError("ThirdPersonController component not found on player.");
+        }
+
         _playerShooterController = PlayerManager.instance.player.GetComponent<ThirdPersonShooterController>();
+        if (_playerShooterController == null)
+        {
+            Debug.LogError("ThirdPersonShooterController component not found on player.");
+        }
+
         _playerInput = PlayerManager.instance.player.GetComponent<PlayerInput>();
+        if (_playerInput == null)
+        {
+            Debug.LogError("PlayerInput component not found on player.");
+        }
+
         _pauseMenuUI.gameObject.SetActive(false);
     }
 

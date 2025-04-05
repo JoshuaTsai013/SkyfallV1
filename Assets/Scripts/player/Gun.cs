@@ -38,7 +38,8 @@ public class Gun : MonoBehaviour
         _impulseSource = PlayerManager.instance.PlayerCamera.GetComponent<CinemachineImpulseSource>();
         _playerStats = PlayerManager.instance.playerStats;
     }
-
+    //Try to shoot
+    //If the player has ammo and the shoot delay has passed, shoot the gun
     public void Shoot(bool isAiming)
     {
         if (_playerStats.AmmoAmount <= 0)

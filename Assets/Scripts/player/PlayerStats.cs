@@ -5,6 +5,9 @@ public class PlayerStats : MonoBehaviour
     public float Health = 100;
     public float HealthPercentage = 1f; // Percentage of health (0 to 1)
     public int AmmoAmount = 30; // Amount of ammo available
+    public int MagazineCapacity = 30; // Capacity of bullets in one magazine
+    public int MaxAmmoAmount = 600; // Amount of ammo available Maximum
+    public bool IsReloading = false; // Is the player reloading
     public int RepairAmount = 5; // Amount of repairs available
     public float HeatPercentage = 0f; // Percentage of heat
     private CharacterGeneral _characterGeneral;

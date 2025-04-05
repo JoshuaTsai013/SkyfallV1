@@ -9,6 +9,7 @@ public class PlayerHUDNew : MonoBehaviour
   public Image BloodBar;
   public TextMeshProUGUI HealthText;
   public TextMeshProUGUI AmmoText;
+  public TextMeshProUGUI TotalAmmoText;
   public TextMeshProUGUI RepairText;
   PlayerStats _playerStats;
   private void Start()
@@ -24,6 +25,7 @@ public class PlayerHUDNew : MonoBehaviour
     BloodBar.fillAmount = _playerStats.HealthPercentage;
     SetBloodText(_playerStats.HealthPercentage);
     SetAmmoText(_playerStats.AmmoAmount);
+    SetTotalAmmoText(_playerStats.MaxAmmoAmount);
     SetRepairText(_playerStats.RepairAmount);
   }
   private void SetHeatBar(float value)
@@ -39,6 +41,11 @@ public class PlayerHUDNew : MonoBehaviour
   }
   public void SetAmmoText(int value)
   {
+    if (_playerStats.IsReloading)
+    {
+      AmmoText.SetText("Reloading...");
+      return;
+    }
     string text = value.ToString("00");
     AmmoText.SetText(text);
   }
@@ -46,5 +53,10 @@ public class PlayerHUDNew : MonoBehaviour
   {
     string text = value.ToString("00");
     RepairText.SetText(text);
+  }
+  public void SetTotalAmmoText(int value)
+  {
+    string text = value.ToString("00");
+    TotalAmmoText.SetText(text);
   }
 }
