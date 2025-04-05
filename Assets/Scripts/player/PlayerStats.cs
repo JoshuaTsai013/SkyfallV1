@@ -8,6 +8,7 @@ public class PlayerStats : MonoBehaviour
     public int MagazineCapacity = 30; // Capacity of bullets in one magazine
     public int MaxAmmoAmount = 600; // Amount of ammo available Maximum
     public bool IsReloading = false; // Is the player reloading
+    public float ReloadTime = 2f; // Time taken to reload in seconds
     public int RepairAmount = 5; // Amount of repairs available
     public float HeatPercentage = 0f; // Percentage of heat
     private CharacterGeneral _characterGeneral;

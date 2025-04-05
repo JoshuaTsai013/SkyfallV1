@@ -42,9 +42,8 @@ public class Gun : MonoBehaviour
     //If the player has ammo and the shoot delay has passed, shoot the gun
     public void Shoot(bool isAiming)
     {
-        if (_playerStats.AmmoAmount <= 0)
+        if (_playerStats.IsReloading == true || _playerStats.AmmoAmount <= 0)
         {
-            _playerStats.AmmoAmount = 0;
             return;
         }
         if (LastShootTime + ShootDelay < Time.time)
