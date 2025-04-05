@@ -21,16 +21,26 @@ public class Missile : MonoBehaviour
     [SerializeField] private float _deviationSpeed = 2; // Speed of deviation
     [SerializeField] private AnimationCurve speedCurve; // Curve for speed adjustment over time
     [SerializeField] private AnimationCurve turnSpeedCurve; // Curve for turn speed adjustment over time
+    [SerializeField] private float downwardSpeed = 1f; // Speed of downward movement
 
     [SerializeField] private float flightDuration = 3f; // Total flight duration
     private float _currentTime; // Tracks elapsed time
+
+    [Header("LIFETIME")]
+    [SerializeField] private float missileLifetime = 8f; // Lifetime of the missile in seconds
 
     private void Start()
     {
         if (_rb == null) _rb = GetComponent<Rigidbody>();
         if (_target == null) _target = GameObject.FindGameObjectWithTag("Player");
 
+        // Randomize speed between _speed and _speed + 5
+        _speed = Random.Range(_speed, _speed + 5);
+
         _rb.linearVelocity = transform.forward * _speed; // Initialize velocity
+
+        // Schedule explosion after missile lifetime
+        Invoke(nameof(Explode), missileLifetime);
     }
 
     private void FixedUpdate()
@@ -43,12 +53,14 @@ public class Missile : MonoBehaviour
         float speedFactor = speedCurve.Evaluate(timeRatio); // Adjust speed based on curve
         float currentSpeed = _speed * speedFactor;
 
-        _rb.linearVelocity = transform.forward * currentSpeed;
+        // Apply forward and downward velocity
+        Vector3 velocity = transform.forward * currentSpeed + Vector3.down * downwardSpeed;
+        _rb.linearVelocity = velocity;
 
         var distance = Vector3.Distance(transform.position, _target.transform.position);
         var leadTimePercentage = Mathf.InverseLerp(_minDistancePredict, _maxDistancePredict, distance);
 
-        _standardPrediction = _target.transform.position; // Predict target position
+        _standardPrediction = _target.transform.position + new Vector3(0, 2, 0); // Predict target position
         AddDeviation(leadTimePercentage); // Add deviation to prediction
         RotateRocket(); // Rotate missile towards target
     }
@@ -79,11 +91,19 @@ public class Missile : MonoBehaviour
         _rb.MoveRotation(Quaternion.RotateTowards(transform.rotation, rotation, _rotateSpeed * turnSpeedFactor * Time.deltaTime));
     }
 
+    private void Explode()
+    {
+        Instantiate(explode, transform.position, Quaternion.identity); // Trigger explosion effect
+        Destroy(gameObject); // Destroy missile
+    }
+
     private void OnCollisionEnter(Collision collision)
     {
         Debug.Log("Trigger entered by: " + collision.gameObject.name);
 
         Instantiate(explode, transform.position, Quaternion.identity); // Trigger explosion effect
+
+        CancelInvoke(nameof(Explode)); // Cancel scheduled explosion on collision
 
         Destroy(gameObject); // Destroy missile on collision
     }
