@@ -7,18 +7,23 @@ public class DieScreen : MonoBehaviour
 {
     [SerializeField] private CanvasGroup canvasGroup; // Reference to the CanvasGroup
 
-    private void OnEnable()
+    private void Start()
+    {
+        canvasGroup.gameObject.SetActive(false); // Initially hide the die screen
+    }
+
+    public void ShowDieScreen()
     {
         if (canvasGroup != null)
         {
-            canvasGroup.gameObject.SetActive(true);
+           canvasGroup.gameObject.SetActive(true);
             // Set initial alpha to 0 and fade in over 0.6 seconds
             canvasGroup.alpha = 0;
             canvasGroup.DOFade(1, 0.6f);
             Cursor.visible = true;
             Cursor.lockState = CursorLockMode.None;
         }
-        else
+         else
         {
             Debug.LogError("CanvasGroup is not assigned.");
         }

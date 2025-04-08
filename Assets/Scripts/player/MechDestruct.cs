@@ -59,7 +59,7 @@ public class MechDestruct : MonoBehaviour
             }
         }
         Instantiate(destroyedMech, transform.position, transform.rotation);
-        _dieScreen.enabled = true;
+        _dieScreen.ShowDieScreen();
         EventSystem.current.SetSelectedGameObject(_firstSelectedButton.gameObject);
     }
 
