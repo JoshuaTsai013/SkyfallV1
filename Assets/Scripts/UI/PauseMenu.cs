@@ -13,9 +13,17 @@ public class PauseMenu : MonoBehaviour
     [SerializeField] private Selectable _firstSelectedButton;
     private bool _isPaused = false;
     private bool _canToggle = true; // Add a flag to control toggling
+    [SerializeField]
     private ThirdPersonController _playerController;
+    [SerializeField]
     private ThirdPersonShooterController _playerShooterController;
+    [SerializeField]
     private PlayerInput _playerInput;
+
+    private void Awake()
+    {
+        _pauseMenuUI.gameObject.SetActive(false);
+    }
 
     private void Start()
     {
@@ -36,8 +44,6 @@ public class PauseMenu : MonoBehaviour
         {
             Debug.LogError("PlayerInput component not found on player.");
         }
-
-        _pauseMenuUI.gameObject.SetActive(false);
     }
 
     public void TogglePauseMenu()
@@ -78,7 +84,7 @@ public class PauseMenu : MonoBehaviour
         // Time.timeScale = 0.1f;
         _pauseMenuUI.gameObject.SetActive(true);
         _isPaused = true;
-        
+
     }
     public void ClosePauseMenu()
     {
