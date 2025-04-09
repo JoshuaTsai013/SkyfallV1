@@ -10,44 +10,51 @@ public class BossCannon : MonoBehaviour
     private float Speed = 100;
     [SerializeField]
     private Transform GunRoot;
+    [SerializeField]
+    private Transform GunRoot2;
+    [SerializeField]
+    private Transform GunRoot3;
 
     [SerializeField]
     private TrailRenderer BulletTrail;
     [SerializeField]
-    private VisualEffect ShootingSystem;
+    private VisualEffect ShootingSystem1;
+    [SerializeField]
+    private VisualEffect ShootingSystem2;
+    [SerializeField]
+    private VisualEffect ShootingSystem3;
     public AudioSource shootSound;
+    [SerializeField]
+    private Animator _animator;
+
     public void Shoot()
     {
-        StartCoroutine(ShootMultiple(3, 0.5f));
+        _animator.SetTrigger("Shoot");
+        StartCoroutine(ShootMultiple(0.3f));
     }
 
-    private IEnumerator ShootMultiple(int bulletCount, float delay)
+    private IEnumerator ShootMultiple(float delay)
     {
-        Vector3 initialPosition = GunRoot.position; // Store initial position
-        for (int i = 0; i < bulletCount; i++)
-        {
-            ShootOne();
-            GunRoot.position -= new Vector3(0, 1.5f, 0); // Apply position offset
-            yield return new WaitForSeconds(delay);
-        }
-        GunRoot.position = initialPosition; // Reset to initial position
-    }
-
-    private void ShootOne()
-    {
-        Vector3 direction = GunRoot.forward;
-        TrailRenderer trail = Instantiate(BulletTrail, GunRoot.position, Quaternion.identity);
-        StartCoroutine(SpawnTrail(trail, direction));
-        ShootingSystem.Play();
-        AudioSource.PlayClipAtPoint(shootSound.clip, GunRoot.position);
-    }
-    private IEnumerator ShootDelay(float delay)
-    {
+        ShootOne(GunRoot, ShootingSystem1);
         yield return new WaitForSeconds(delay);
-        ShootOne();
+        ShootOne(GunRoot2, ShootingSystem2);
+        yield return new WaitForSeconds(delay);
+        ShootOne(GunRoot3, ShootingSystem3);
     }
 
+    private void ShootOne(Transform gunRoot, VisualEffect shootingSystem)
+    {
+        Vector3 direction = gunRoot.forward;
+        TrailRenderer trail = Instantiate(BulletTrail, gunRoot.position, Quaternion.identity);
+        StartCoroutine(SpawnTrail(trail, direction));
+        
+        if (shootingSystem != null)
+        {
+            shootingSystem.Play();
+        }
 
+        AudioSource.PlayClipAtPoint(shootSound.clip, gunRoot.position);
+    }
 
     private IEnumerator SpawnTrail(TrailRenderer Trail, Vector3 _direction)
     {
