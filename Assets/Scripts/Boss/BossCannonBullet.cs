@@ -18,10 +18,10 @@ public class BossCannonBullet : MonoBehaviour
         Vector3 hitPoint = transform.position; // Default to bullet's position
 
         // Raycast to find the exact impact point
-        if (Physics.Raycast(_startPosition, (transform.position - _startPosition).normalized, out RaycastHit hit, Vector3.Distance(_startPosition, transform.position)))
-        {
-            hitPoint = hit.point; // Set impact position to exact hit point
-        }
+        // if (Physics.Raycast(_startPosition, (transform.position - _startPosition).normalized, out RaycastHit hit, Vector3.Distance(_startPosition, transform.position)))
+        // {
+        //     hitPoint = hit.point; // Set impact position to exact hit point
+        // }
 
         // Instantiate impact effect at the precise hit location
         Instantiate(ImpactParticleSystem, hitPoint, Quaternion.LookRotation(-transform.forward));

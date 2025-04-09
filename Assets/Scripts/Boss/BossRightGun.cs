@@ -8,6 +8,9 @@ public class BossRightGun : MonoBehaviour
     private float _GunAngle = 0f;
     [SerializeField]
     private Transform _gunTransform;
+    [SerializeField]
+    private float offset;
+
     // Update is called once per frame
     void Update()
     {
@@ -41,6 +44,7 @@ public class BossRightGun : MonoBehaviour
 
         // Set the animation parameter
         _GunAngle = normalizedAngle;
+        _GunAngle += offset; // Add the offset to the normalized angle
         _animator.SetFloat("GunAngle", _GunAngle);
     }
 }
