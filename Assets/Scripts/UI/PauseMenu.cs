@@ -81,7 +81,7 @@ public class PauseMenu : MonoBehaviour
         _pauseMenuUI.DOFade(1, 0.05f);
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.None;
-        // Time.timeScale = 0.1f;
+        Time.timeScale = 0.1f;
         _pauseMenuUI.gameObject.SetActive(true);
         _isPaused = true;
 

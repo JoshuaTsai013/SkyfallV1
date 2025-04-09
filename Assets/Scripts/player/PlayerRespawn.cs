@@ -26,6 +26,7 @@ public class PlayerRespawn : MonoBehaviour
     [SerializeField] private DieScreen _dieScreen;
 
     [Header("Cached Components")]
+    [SerializeField] private PlayerStats _playerStats;
     private ThirdPersonController _thirdPersonController;
     private ThirdPersonShooterController _thirdPersonShooterController;
     private MeleeAttack _meleeAttack;
@@ -83,6 +84,7 @@ public class PlayerRespawn : MonoBehaviour
         // Deactivate UI elements
         _PauseMenuUI.SetActive(false);
         _GameOverUI.SetActive(false);
+        _playerStats.ResetStats(); // Reset player stats
 
         // Enable player controls
         _mechModel.SetActive(true);
@@ -108,6 +110,7 @@ public class PlayerRespawn : MonoBehaviour
     public void MechDie()
     {
         _isDied = true;
+        Time.timeScale = 1.0f;
         _mechModel.SetActive(false);
         _thirdPersonController.enabled = false;
         _thirdPersonShooterController.enabled = false;

@@ -8,6 +8,7 @@ public class PlayerInputs : MonoBehaviour
     public Vector2 look;
     public bool jump;
     public bool Dash;
+    public bool run;
     public bool aim;
     public bool shoot;
 
@@ -54,6 +55,19 @@ public class PlayerInputs : MonoBehaviour
         }
 
         //print("Dashttt"+Dash);
+    }
+
+    public void RunInput(InputAction.CallbackContext ctx)
+    {
+        if (ctx.performed)
+        {
+            run = true;
+        }
+        else
+        {
+            run = false;
+        }
+        // Debug.Log("Run: " + run);
     }
     public void AimInput(InputAction.CallbackContext ctx)
     {

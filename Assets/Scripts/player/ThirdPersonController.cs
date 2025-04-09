@@ -28,6 +28,11 @@ public class ThirdPersonController : MonoBehaviour
     [Tooltip("Acceleration and deceleration")]
     public float SpeedChangeRate = 10.0f;
 
+    [Header("Run")]
+    [Space(5)]
+    public float MoveSpeedOnGroundRun = 7.0f;
+    public float MoveSpeedOnAirRun = 4.0f;
+
     [Header("Dash")]
     [Space(5)]
 
@@ -325,6 +330,17 @@ public class ThirdPersonController : MonoBehaviour
             _inputDirectionLastTime = _inputDirection; //save the last input direction
 
         }
+
+        if (_input.run)
+        {
+            MoveSpeed = Grounded ? MoveSpeedOnGroundRun : MoveSpeedOnAirRun;
+            _animator.SetBool("Run", true);
+        }
+        else
+        {
+            _animator.SetBool("Run", false);
+        }
+
         _animationBlend = Mathf.Lerp(_animationBlend, targetSpeed, Time.deltaTime * SpeedChangeRate);
         if (_animationBlend < 0.01f) _animationBlend = 0f;
 
