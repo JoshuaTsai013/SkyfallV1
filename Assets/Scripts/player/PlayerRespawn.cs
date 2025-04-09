@@ -94,6 +94,7 @@ public class PlayerRespawn : MonoBehaviour
         _playerInput.enabled = true;
         // Reset player state
         _isDied = false;
+        characterGeneral.currentHealth = characterGeneral.maxHealth;
         // Move player
         transform.SetPositionAndRotation(currentSpawnPoint.position, currentSpawnPoint.rotation);
     }
