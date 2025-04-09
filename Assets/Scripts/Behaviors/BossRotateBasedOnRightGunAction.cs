@@ -5,8 +5,8 @@ using Action = Unity.Behavior.Action;
 using Unity.Properties;
 
 [Serializable, GeneratePropertyBag]
-[NodeDescription(name: "Rotate based on RightGun", story: "[Self] rotate to [target] with [offset] in [time] sec and check if align", category: "Action/MyActions", id: "94678221d449b33306ad9ace90f84cfc")]
-public partial class RotateBasedOnRightGunAction : Action
+[NodeDescription(name: "Boss Rotate based on RightGun", story: "[Self] rotate to [target] with [offset] in [time] sec and check if align", category: "Action/Boss", id: "94678221d449b33306ad9ace90f84cfc")]
+public partial class BossRotateBasedOnRightGunAction : Action
 {
     [SerializeReference] public BlackboardVariable<GameObject> Self;
     [SerializeReference] public BlackboardVariable<GameObject> Target;
