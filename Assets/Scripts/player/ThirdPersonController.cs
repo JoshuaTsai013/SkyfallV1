@@ -56,11 +56,6 @@ public class ThirdPersonController : MonoBehaviour
     public bool CanJump = true; //will be set to false when player is not on ground and overheat
     [Tooltip("Player started Jump")]
     public bool isJump = false;
-    // public VisualEffect JumpEffect1;
-    // public VisualEffect JumpEffect2;
-    // public VisualEffect JumpEffect3;
-    // public VisualEffect JumpEffect4;
-
 
     [Tooltip("The character uses its own gravity value. The engine default is -9.81f")]
     public float Gravity = -15.0f;
@@ -122,7 +117,6 @@ public class ThirdPersonController : MonoBehaviour
     // timeout deltatime
     private float _DashTimeoutDelta;
     private float _DashDurationDelta;
-    // private float _jumpDelayTimeoutDelta;
     private float _jumpTimeoutDelta;
     private float _fallTimeoutDelta;
 
@@ -157,13 +151,10 @@ public class ThirdPersonController : MonoBehaviour
 
         _controller = GetComponent<CharacterController>();
         _input = GetComponent<PlayerInputs>();
-
         _playerInput = GetComponent<PlayerInput>();
 
         heat = PlayerManager.instance.player.GetComponent<Heat>();
         _rotationSmoothTime = RotationSmoothTimeOnGround;
-        // reset our timeouts on start
-        // _jumpDelayTimeoutDelta = JumpDelayTimeout;
         _jumpTimeoutDelta = JumpTimeout;
         _fallTimeoutDelta = FallTimeout;
         _DashTimeoutDelta = DashTimeout;
@@ -212,6 +203,17 @@ public class ThirdPersonController : MonoBehaviour
             MoveSpeed = MoveSpeedOnAir;
             //set the Rotation speed on Air
             _rotationSmoothTime = RotationSmoothTimeOnAir;
+        }
+        
+        if (_input.run && !heat.Overheated)
+        {
+            MoveSpeed = Grounded ? MoveSpeedOnGroundRun : MoveSpeedOnAirRun;
+            heat.AddRunHeat();
+            _animator.SetBool("Run", true);
+        }
+        else
+        {
+            _animator.SetBool("Run", false);
         }
 
         if (heat.Overheated)
@@ -331,16 +333,6 @@ public class ThirdPersonController : MonoBehaviour
 
         }
 
-        if (_input.run && !heat.Overheated)
-        {
-            MoveSpeed = Grounded ? MoveSpeedOnGroundRun : MoveSpeedOnAirRun;
-            heat.AddRunHeat();
-            _animator.SetBool("Run", true);
-        }
-        else
-        {
-            _animator.SetBool("Run", false);
-        }
 
         _animationBlend = Mathf.Lerp(_animationBlend, targetSpeed, Time.deltaTime * SpeedChangeRate);
         if (_animationBlend < 0.01f) _animationBlend = 0f;
@@ -378,11 +370,7 @@ public class ThirdPersonController : MonoBehaviour
             }
             _animator.SetTrigger("Dash");
             heat.AddDashHeat();
-            // JumpEffect3.Play();
-            // JumpEffect4.Play();
             SoundManager.PlaySound(SoundType.Dash, 0.2f);
-            // CanJump = false; 
-            // Disable jumping while dashing
 
             //check angle between player input and character facing
             Vector3 vectorinputXZ = new(_inputDirectionLastTime.x, 0, _inputDirectionLastTime.z);
@@ -410,21 +398,12 @@ public class ThirdPersonController : MonoBehaviour
         //Timeout Dash
         if (isDash)
         {
-            // CanJump = false; 
-            // Ensure jumping is disabled while dashing
             _input.jump = false;
             _DashDurationDelta -= Time.deltaTime;
             if (_DashDurationDelta <= 0.0f)
             {
-
                 _input.Dash = false;
                 isDash = false;
-                // _animator.SetBool("Dash", false);
-                // JumpEffect3.Stop();
-                // JumpEffect4.Stop();
-
-                // CanJump = true;
-                // Re-enable jumping after dashing
             }
         }
 
@@ -437,7 +416,6 @@ public class ThirdPersonController : MonoBehaviour
     #region Jump
     private void Jump()
     {
-        // Debug.Log("_jumpTimeoutDelta: " + _jumpTimeoutDelta);
         // jump timeout
         if (_jumpTimeoutDelta >= 0.0f)
         {
@@ -462,8 +440,6 @@ public class ThirdPersonController : MonoBehaviour
             {
                 CanJump = false;
             }
-            // update animator
-            // _animator.SetBool("Jump", false);
 
             // Jump
             if (CanJump && _input.jump)
@@ -474,7 +450,7 @@ public class ThirdPersonController : MonoBehaviour
                 CanJump = false; // Disable jumping again until conditions are met
                 _jumpTimeoutDelta = JumpTimeout; // start Timeout Jump state
                 isJump = true;
-                Invoke("JumpInvoke", JumpDelayTimeout);
+                Invoke(nameof(JumpInvoke), JumpDelayTimeout);
             }
         }
         else
@@ -497,13 +473,9 @@ public class ThirdPersonController : MonoBehaviour
             // reset the fall timeout timer
             _fallTimeoutDelta = FallTimeout;
             _animator.SetBool("FreeFall", false);
-            // JumpEffect1.Stop();
-            // JumpEffect2.Stop();
         }
         else
         {
-            // JumpEffect1.Play();
-            // JumpEffect2.Play();
             // fall timeout
             if (_fallTimeoutDelta >= 0.0f)
             {

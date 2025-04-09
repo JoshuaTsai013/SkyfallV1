@@ -7,7 +7,10 @@ public enum SoundType
     Jump,
     Landing,
     Footstep,
-    Drill
+    Drill,
+    EmptyShell,
+    Reload,
+    Engine
 }
 
 [RequireComponent(typeof(AudioSource))]

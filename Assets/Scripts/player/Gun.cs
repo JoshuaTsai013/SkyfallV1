@@ -2,6 +2,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.VFX;
 using Unity.Cinemachine;
+using System;
 
 public class Gun : MonoBehaviour
 {
@@ -27,6 +28,7 @@ public class Gun : MonoBehaviour
     private float Speed = 100;
     [SerializeField]
     private LayerMask Mask;
+    private bool _emptySoundPlayed;
     private float LastShootTime;
     private Vector3 _BulletDirection;
     private CinemachineImpulseSource _impulseSource;
@@ -44,6 +46,12 @@ public class Gun : MonoBehaviour
     {
         if (_playerStats.IsReloading == true || _playerStats.AmmoAmount <= 0)
         {
+            if (!_emptySoundPlayed && _playerStats.IsReloading == false)
+            {
+                SoundManager.PlaySound(SoundType.EmptyShell, 0.15f);
+                _emptySoundPlayed = true;
+                StartCoroutine(ResetEmptySoundPlayed());
+            }
             return;
         }
         if (LastShootTime + ShootDelay < Time.time)
@@ -74,6 +82,14 @@ public class Gun : MonoBehaviour
 
             LastShootTime = Time.time;
         }
+    }
+
+    private IEnumerator ResetEmptySoundPlayed()
+    {
+        // Wait for 0.5 seconds before resetting the empty sound flag
+        yield return new WaitForSeconds(0.1f);
+        _emptySoundPlayed = false;
+        
     }
 
     private void PlayBulletShell()

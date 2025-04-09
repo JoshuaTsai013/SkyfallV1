@@ -3,7 +3,9 @@ using UnityEngine;
 public class MinionBullet : MonoBehaviour
 {
     [SerializeField] private float maxLifeTime = 2f;
+    [SerializeField] private LayerMask _mask;
     public ParticleSystem ImpactParticleSystem;
+
 
     private Vector3 _startPosition;
 
@@ -18,7 +20,7 @@ public class MinionBullet : MonoBehaviour
         Vector3 hitPoint = transform.position; // Default to bullet's position
 
         // Raycast to find the exact impact point
-        if (Physics.Raycast(_startPosition, (transform.position - _startPosition).normalized, out RaycastHit hit, Vector3.Distance(_startPosition, transform.position)))
+        if (Physics.Raycast(_startPosition, (transform.position - _startPosition).normalized, out RaycastHit hit, Vector3.Distance(_startPosition, transform.position), _mask))
         {
             hitPoint = hit.point; // Set impact position to exact hit point
         }

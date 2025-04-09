@@ -1,3 +1,5 @@
+using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -10,7 +12,7 @@ public class TrainingManager : MonoBehaviour
     public Image Shoot;
     public Image Melee;
     public Image Overheat;
-   
+
 
     public TrainingTrigger MoveCollider;
     public TrainingTrigger JumpCollider;
@@ -22,6 +24,9 @@ public class TrainingManager : MonoBehaviour
     public TrainingTrigger ExitCollider;
 
     public TrainingDoorOpen door;
+    public FadeOutTransitionScreen fadeOutTransitionScreen;
+    private bool _sceneCanChange = true;
+
     void Start()
     {
         Jump.gameObject.SetActive(false);
@@ -46,11 +51,20 @@ public class TrainingManager : MonoBehaviour
             NextCollider.gameObject.SetActive(false);
         }
 
-        if (ExitCollider.stay)
+        if (ExitCollider.stay && _sceneCanChange)
         {
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex +1);
-            gameObject.SetActive(false);
+            _sceneCanChange = false;
+            fadeOutTransitionScreen.FadeIn();
+            StartCoroutine(LoadNextSceneWithDelay());
         }
+    }
+
+    private IEnumerator LoadNextSceneWithDelay()
+    {
+        // Load the next scene after a delay
+        yield return new WaitForSeconds(3f); // Adjust the delay as needed
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1); // Load the next scene
+        gameObject.SetActive(false);
     }
 
     private void HandleTrainingStep(TrainingTrigger trigger, Image uiElement)
