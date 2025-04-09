@@ -331,9 +331,10 @@ public class ThirdPersonController : MonoBehaviour
 
         }
 
-        if (_input.run)
+        if (_input.run && !heat.Overheated)
         {
             MoveSpeed = Grounded ? MoveSpeedOnGroundRun : MoveSpeedOnAirRun;
+            heat.AddRunHeat();
             _animator.SetBool("Run", true);
         }
         else

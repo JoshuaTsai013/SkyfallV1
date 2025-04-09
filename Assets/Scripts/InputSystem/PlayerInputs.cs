@@ -23,6 +23,73 @@ public class PlayerInputs : MonoBehaviour
     public float normalSensitivity = 1.0f;
     public float aimSensitivity = 0.5f;
 
+    public InputAction action;
+    public float longPressThreshold = 0.5f; // seconds
+
+    private bool isPressed = false;
+    private float pressStartTime;
+
+    void OnEnable()
+    {
+        action.Enable();
+        action.started += OnStarted;
+        action.canceled += OnCanceled;
+    }
+
+    void OnDisable()
+    {
+        action.started -= OnStarted;
+        action.canceled -= OnCanceled;
+        action.Disable();
+    }
+
+    private void OnStarted(InputAction.CallbackContext context)
+    {
+        isPressed = true;
+        pressStartTime = Time.time;
+        InvokeRepeating(nameof(CheckLongPress), 0.0f, 0.1f); // Check for long press periodically
+    }
+
+    private void OnCanceled(InputAction.CallbackContext context)
+    {
+        if (!isPressed) return; // Ensure the logic only runs if the button was pressed
+        isPressed = false;
+        CancelInvoke(nameof(CheckLongPress)); // Stop checking for long press
+        float heldTime = Time.time - pressStartTime;
+
+        if (heldTime < longPressThreshold)
+        {
+            HandleShortPress();
+        }
+        else
+        {
+            run = false; // Reset run to false when the key is released
+        }
+    }
+
+    private void CheckLongPress()
+    {
+        if (isPressed && Time.time - pressStartTime >= longPressThreshold)
+        {
+            HandleLongPress();
+            CancelInvoke(nameof(CheckLongPress)); // Trigger long press only once
+        }
+    }
+
+    private void HandleShortPress()
+    {
+        Debug.Log("Short press triggered");
+        // Trigger short press logic here
+        Dash = true;
+    }
+
+    private void HandleLongPress()
+    {
+        Debug.Log("Long press triggered");
+        // Trigger long press logic here
+        run = true;
+    }
+
     public void MoveInput(InputAction.CallbackContext ctx)
     {
         move = ctx.ReadValue<Vector2>();
@@ -120,7 +187,7 @@ public class PlayerInputs : MonoBehaviour
 
     private void OnApplicationFocus(bool hasFocus)
     {
-        SetCursorState(cursorLocked);
+        SetCursorState(hasFocus && cursorLocked);
     }
 
     private void SetCursorState(bool newState)

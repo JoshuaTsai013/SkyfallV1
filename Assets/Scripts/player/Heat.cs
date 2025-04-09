@@ -4,6 +4,7 @@ public class Heat : MonoBehaviour
 {
     public float JumpHeat = 10;
     public float DashHeat = 10;
+    public float RunHeat = 1;
     public float maxHeat = 100;
     public float currentHeat = 0;
     public float HeatPercentage;
@@ -34,6 +35,12 @@ public class Heat : MonoBehaviour
         }
         currentHeat += DashHeat;
     }
+    public void AddRunHeat()
+    {
+        currentHeat += RunHeat;
+    }
+
+
 
     private void FixedUpdate()
     {
@@ -42,7 +49,7 @@ public class Heat : MonoBehaviour
         {
             //Overheat 
             // call vfx camera shake
-            
+
             currentHeat = maxHeat;
             SoundManager.PlaySound(SoundType.Overheated, 0.1f);
             Overheated = true; //will be used to disable dash and jump in ThirdPersonUserControl script
