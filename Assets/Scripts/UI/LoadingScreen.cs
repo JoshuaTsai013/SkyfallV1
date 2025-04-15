@@ -40,7 +40,7 @@ public class LoadingScreen : MonoBehaviour
     async UniTask RunToLoading(CancellationToken cancellation)
     {
         StartParticles.Stop();
-        StartText.DOFade(0, 0.2f);
+        StartText.DOFade(0, 1f);
         Title.DOFade(0, 0.5f);
         loadingScreen.DOFade(1, 2f);
         await UniTask.Delay(1000, cancellationToken: cancellation);
