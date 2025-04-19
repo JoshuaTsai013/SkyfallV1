@@ -12,7 +12,12 @@ public partial class BossRotateBasedOnRightGunAction : Action
     [SerializeReference] public BlackboardVariable<GameObject> Target;
     [SerializeReference] public BlackboardVariable<Vector3> Offset;
     [SerializeReference] public BlackboardVariable<float> Time;
+    [SerializeReference] public BlackboardVariable<bool> IsAddOffset;
     private float _elapsedTime = 0;
+    private Vector3 _adjustedOffset = Vector3.zero;
+    
+    // Cache this constant rotation
+    private readonly Quaternion _xAxisAdjustment = Quaternion.Euler(0, -90, 0);
 
     protected override Status OnStart()
     {
@@ -26,35 +31,52 @@ public partial class BossRotateBasedOnRightGunAction : Action
         {
             return Status.Failure;
         }
+        
+        // Cache transform references
+        Transform selfTransform = Self.Value.transform;
+        Transform targetTransform = Target.Value.transform;
+        
         _elapsedTime -= UnityEngine.Time.deltaTime;
+        
+        // Only reset adjustedOffset if needed
+        if (IsAddOffset.Value)
+        {
+            _adjustedOffset = selfTransform.right * Offset.Value.x +
+                             selfTransform.up * Offset.Value.y +
+                             selfTransform.forward * Offset.Value.z;
 
-        // Correct the Offset logic to ensure it adjusts based on the right arm
-        Vector3 adjustedOffset = Self.Value.transform.right * Offset.Value.x +
-                                 Self.Value.transform.up * Offset.Value.y +
-                                 Self.Value.transform.forward * Offset.Value.z;
-
-        Debug.DrawLine(Self.Value.transform.position + adjustedOffset, Target.Value.transform.position, Color.yellow);
-
-        Vector3 direction = (Target.Value.transform.position - (Self.Value.transform.position + adjustedOffset)).normalized;
+            Debug.DrawLine(selfTransform.position + _adjustedOffset, targetTransform.position, Color.yellow);
+        }
+        else
+        {
+            _adjustedOffset = Vector3.zero;
+        }
+        
+        Vector3 direction = (targetTransform.position - (selfTransform.position + _adjustedOffset)).normalized;
         direction.y = 0; // Keep only the horizontal direction
 
-        Quaternion targetRotation = Quaternion.LookRotation(direction);
-        Self.Value.transform.rotation = Quaternion.RotateTowards(
-            Self.Value.transform.rotation,
-            targetRotation,
-            UnityEngine.Time.deltaTime * 360 / Time.Value
-        );
+        // Create base target rotation
+        Quaternion targetRotation = Quaternion.LookRotation(direction) * _xAxisAdjustment;
+        
+        // Cache rotation speed
+        float rotationSpeed = UnityEngine.Time.deltaTime * 360f / Time.Value;
 
-        if (Quaternion.Angle(Self.Value.transform.rotation, targetRotation) < 0.1f && _elapsedTime <= 0)
+        selfTransform.rotation = Quaternion.RotateTowards(
+            selfTransform.rotation,
+            targetRotation,
+            rotationSpeed
+        );
+        
+        // Check time first (cheaper than angle calculation)
+        if (_elapsedTime <= 0)
         {
-            return Status.Success;
+            if (Quaternion.Angle(selfTransform.rotation, targetRotation) < 0.1f)
+            {
+                return Status.Success;
+            }
         }
 
         return Status.Running;
-    }
-
-    protected override void OnEnd()
-    {
     }
 }
 
