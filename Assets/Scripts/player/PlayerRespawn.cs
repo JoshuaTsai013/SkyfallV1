@@ -63,6 +63,7 @@ public class PlayerRespawn : MonoBehaviour
     public static void SetSpawnPoint(Transform newSpawn)
     {
         currentSpawnPoint = newSpawn;
+        Debug.Log($"Checkpoint reached at {currentSpawnPoint.position}");
     }
 
     public void Respawn()

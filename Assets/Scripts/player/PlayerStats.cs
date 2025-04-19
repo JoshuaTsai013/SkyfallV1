@@ -37,6 +37,7 @@ public class PlayerStats : MonoBehaviour
         AmmoAmount = _initialMagazineCapacity;
         MagazineCapacity = _initialMagazineCapacity;
         MaxAmmoAmount = _initialMaxAmmoAmount;
+        RepairAmount = _initialRepairAmount;
         IsReloading = false;
     }
 }

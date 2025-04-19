@@ -78,14 +78,14 @@ public class PlayerInputs : MonoBehaviour
 
     private void HandleShortPress()
     {
-        Debug.Log("Short press triggered");
+        // Debug.Log("Short press triggered");
         // Trigger short press logic here
         Dash = true;
     }
 
     private void HandleLongPress()
     {
-        Debug.Log("Long press triggered");
+        // Debug.Log("Long press triggered");
         // Trigger long press logic here
         run = true;
     }

@@ -9,7 +9,7 @@ public class CheckPoint : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             PlayerRespawn.SetSpawnPoint(transform);
-            Debug.Log($"Checkpoint reached at {transform.position}");
+            
             if (onActivateEffect != null)
             Instantiate(onActivateEffect, transform.position, Quaternion.identity);
         }
