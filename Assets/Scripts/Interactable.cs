@@ -13,7 +13,13 @@ public class Interactable : MonoBehaviour
     [SerializeField]
     private PlayerStats _playerStats; // Reference to the player stats script
 
-
+    public enum InteractableType
+    {
+        None,
+        Checkpoint,
+        Ammo,
+        Repair
+    }
 
     private void OnTriggerEnter(Collider other)
     {
