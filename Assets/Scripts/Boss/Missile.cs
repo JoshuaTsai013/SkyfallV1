@@ -17,6 +17,7 @@ public class Missile : MonoBehaviour
     private Vector3 _standardPrediction, _deviatedPrediction; // Prediction vectors
 
     [Header("DEVIATION")]
+    [SerializeField] private float _speedRandomization = 10; // Angle of deviation
     [SerializeField] private float _deviationAmount = 50; // Amount of deviation
     [SerializeField] private float _deviationSpeed = 2; // Speed of deviation
     [SerializeField] private AnimationCurve speedCurve; // Curve for speed adjustment over time
@@ -35,7 +36,7 @@ public class Missile : MonoBehaviour
         if (_target == null) _target = GameObject.FindGameObjectWithTag("Player");
 
         // Randomize speed between _speed and _speed + 5
-        _speed = Random.Range(_speed, _speed + 5);
+        _speed = Random.Range(_speed, _speed + _speedRandomization);
 
         _rb.linearVelocity = transform.forward * _speed; // Initialize velocity
 
