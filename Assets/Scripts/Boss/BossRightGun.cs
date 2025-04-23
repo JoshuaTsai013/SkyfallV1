@@ -15,10 +15,6 @@ public class BossRightGun : MonoBehaviour
     void Update()
     {
         GunAngle();
-        // if (Time.frameCount % 120 == 0)
-        // {
-        //     _animator.SetTrigger("RightGunShot");
-        // }
     }
 
     private void GunAngle()

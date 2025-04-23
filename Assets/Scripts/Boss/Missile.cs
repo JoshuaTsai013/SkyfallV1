@@ -30,6 +30,9 @@ public class Missile : MonoBehaviour
     [Header("LIFETIME")]
     [SerializeField] private float missileLifetime = 8f; // Lifetime of the missile in seconds
 
+    // Add a new field to store the inherited velocity
+    private Vector3 _inheritedVelocity = Vector3.zero;
+
     private void Start()
     {
         if (_rb == null) _rb = GetComponent<Rigidbody>();
@@ -38,7 +41,8 @@ public class Missile : MonoBehaviour
         // Randomize speed between _speed and _speed + 5
         _speed = Random.Range(_speed, _speed + _speedRandomization);
 
-        _rb.linearVelocity = transform.forward * _speed; // Initialize velocity
+        // Apply both forward motion and inherited velocity
+        _rb.linearVelocity = transform.forward * _speed + _inheritedVelocity;
 
         // Schedule explosion after missile lifetime
         Invoke(nameof(Explode), missileLifetime);
@@ -54,8 +58,13 @@ public class Missile : MonoBehaviour
         float speedFactor = speedCurve.Evaluate(timeRatio); // Adjust speed based on curve
         float currentSpeed = _speed * speedFactor;
 
-        // Apply forward and downward velocity
+        // Include inherited velocity in the calculation
         Vector3 velocity = transform.forward * currentSpeed + Vector3.down * downwardSpeed;
+
+        // Add inherited velocity (optionally fade it out over time)
+        float inheritedFactor = Mathf.Max(0, 1 - timeRatio * 2); // Fades out inherited velocity over half the lifetime
+        velocity += _inheritedVelocity * inheritedFactor;
+
         _rb.linearVelocity = velocity;
 
         var distance = Vector3.Distance(transform.position, _target.transform.position);
@@ -64,6 +73,12 @@ public class Missile : MonoBehaviour
         _standardPrediction = _target.transform.position + new Vector3(0, 2, 0); // Predict target position
         AddDeviation(leadTimePercentage); // Add deviation to prediction
         RotateRocket(); // Rotate missile towards target
+    }
+
+    public void SetInheritedVelocity(Vector3 velocity)
+    {
+        _inheritedVelocity = velocity;
+        // Don't set _rb.linearVelocity directly here
     }
 
     private void AddDeviation(float leadTimePercentage)
@@ -100,7 +115,7 @@ public class Missile : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        Debug.Log("Trigger entered by: " + collision.gameObject.name);
+        // Debug.Log("Trigger entered by: " + collision.gameObject.name);
 
         Instantiate(explode, transform.position, Quaternion.identity); // Trigger explosion effect
 
