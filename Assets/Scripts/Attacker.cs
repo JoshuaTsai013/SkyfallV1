@@ -7,5 +7,6 @@ public class Attacker : MonoBehaviour
    private void OnTriggerEnter(Collider other)
    {
       other.GetComponent<CharacterGeneral>()?.TakeDamage(this);
+      other.GetComponent<DamageRelay>()?.TakeDamage(this);
    }
 }
