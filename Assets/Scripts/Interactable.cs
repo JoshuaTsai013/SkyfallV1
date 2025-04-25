@@ -20,6 +20,14 @@ public class Interactable : MonoBehaviour
         Ammo,
         Repair
     }
+    private void Start()
+    {
+        // Initialize player stats if not already set
+        if (_playerStats == null)
+        {
+            _playerStats = PlayerManager.instance.playerStats; // Assuming you have a PlayerManager that manages player stats
+        }
+    }
 
     private void OnTriggerEnter(Collider other)
     {
