@@ -75,6 +75,7 @@ public class PauseMenu : MonoBehaviour
             return;
         }
         _playerInput.enabled = false; // Disable player input actions
+        // _playerInput.SwitchCurrentActionMap("UI"); // Switch to the UI action map
         EventSystem.current.SetSelectedGameObject(_firstSelectedButton.gameObject);
         _playerController.enabled = false;
         _playerShooterController.enabled = false;
@@ -93,6 +94,7 @@ public class PauseMenu : MonoBehaviour
             return;
         }
         _playerInput.enabled = true; // Enable player input actions
+        // _playerInput.SwitchCurrentActionMap("Player"); // Switch back to the player action map
         _playerShooterController.enabled = true;
         _pauseMenuUI.DOFade(0, 0.05f);
         Cursor.visible = false;
