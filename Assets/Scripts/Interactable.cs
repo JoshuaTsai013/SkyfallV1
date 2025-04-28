@@ -72,11 +72,12 @@ public class Interactable : MonoBehaviour
                     break;
             }
             _isUsed = true; // Mark as used to prevent re-triggering
-            if (_visualEffect != null)
+
+            if (_visualEffect != null && _interactableType != InteractableType.Checkpoint)
             {
                 _visualEffect.Stop(); // Play the visual effect
+                Destroy(gameObject, 2f);
             }
-            Destroy(gameObject, 2f); // Destroy the interactable object after 1 second
         }
     }
 

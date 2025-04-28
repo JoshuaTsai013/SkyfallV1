@@ -69,8 +69,7 @@ public class PlayerAddHealth : MonoBehaviour
         }
 
         // Ensure the health is exactly at the intended value (to handle floating point inaccuracies)
-        _characterGeneral.currentHealth = Mathf.Min(_characterGeneral.maxHealth,
-            _characterGeneral.currentHealth + (healthToAdd - (healthToAdd)));
+        _characterGeneral.currentHealth = Mathf.Min(_characterGeneral.maxHealth, _characterGeneral.currentHealth);
 
         // Healing is complete, start cooldown
         _isHealing = false;
