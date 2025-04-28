@@ -34,9 +34,10 @@ public class Interactable : MonoBehaviour
     private void OnTriggerStay(Collider other)
     {
         if (_isUsed) return;
-        _Text.SetActive(true); // Show the text object when player is near
+
         if (other.CompareTag("Player"))
         {
+            _Text.SetActive(true); // Show the text object when player is near
             PlayerInputs _inputs = other.GetComponent<PlayerInputs>(); // Call the Interact method on the player inputs script
             if (_inputs == null || !_inputs.interact) // Check if the player has the PlayerInputs component and is interacting
             {
@@ -44,7 +45,7 @@ public class Interactable : MonoBehaviour
                 return;
             }
             Debug.Log("Interactable Triggered: " + _interactableType); // Log the interaction for debugging
-           _Text.SetActive(false); // Hide the text object after interaction
+            _Text.SetActive(false); // Hide the text object after interaction
             switch (_interactableType)
             {
                 case InteractableType.None:
