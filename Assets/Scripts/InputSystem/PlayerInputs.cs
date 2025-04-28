@@ -11,6 +11,7 @@ public class PlayerInputs : MonoBehaviour
     public bool run;
     public bool aim;
     public bool shoot;
+    public bool interact;
 
     [Header("Movement Settings")]
     public bool analogMovement;
@@ -174,6 +175,19 @@ public class PlayerInputs : MonoBehaviour
             shoot = false;
         }
         // Debug.Log("Shoot: " + shoot);
+    }
+
+    public void InteractInput(InputAction.CallbackContext ctx)
+    {
+        if (ctx.performed)
+        {
+            interact = true;
+        }
+        else{
+            interact = false;
+        }
+
+        //print("Jumpppp"+jump);
     }
 
     public void OnDeviceChange(InputDevice device, InputDeviceChange change)

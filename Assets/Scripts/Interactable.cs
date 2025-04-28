@@ -12,6 +12,8 @@ public class Interactable : MonoBehaviour
     private int _repairPickupAmount = 3; // Amount of health to give when picked up
     [SerializeField]
     private PlayerStats _playerStats; // Reference to the player stats script
+    [SerializeField]
+    private GameObject _Text; // Reference to the text object for displaying messages
 
     public enum InteractableType
     {
@@ -29,14 +31,20 @@ public class Interactable : MonoBehaviour
         }
     }
 
-    private void OnTriggerEnter(Collider other)
+    private void OnTriggerStay(Collider other)
     {
         if (_isUsed) return;
+        _Text.SetActive(true); // Show the text object when player is near
         if (other.CompareTag("Player"))
         {
-            // Check if the player is not already using this interactable
-
-
+            PlayerInputs _inputs = other.GetComponent<PlayerInputs>(); // Call the Interact method on the player inputs script
+            if (_inputs == null || !_inputs.interact) // Check if the player has the PlayerInputs component and is interacting
+            {
+                Debug.Log("Interactable Not Doing: "); // Log the interaction for debugging
+                return;
+            }
+            Debug.Log("Interactable Triggered: " + _interactableType); // Log the interaction for debugging
+           _Text.SetActive(false); // Hide the text object after interaction
             switch (_interactableType)
             {
                 case InteractableType.None:
@@ -60,6 +68,14 @@ public class Interactable : MonoBehaviour
                     break;
             }
             _isUsed = true; // Mark as used to prevent re-triggering
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            _Text.SetActive(false);
         }
     }
 }
