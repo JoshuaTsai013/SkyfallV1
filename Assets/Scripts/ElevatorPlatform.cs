@@ -4,7 +4,9 @@ using UnityEngine;
 public class ElevatorPlatform : MonoBehaviour
 {
     [SerializeField]
-    private GameObject _Text; // Reference to the text object for displaying messages
+    private GameObject _upText; // Reference to the text object for displaying messages
+    [SerializeField]
+    private GameObject _downText; // Reference to the text object for displaying messages
     [SerializeField]
     private bool _isUsed = false; // Flag to check if the elevator has been used
     [SerializeField]
@@ -32,7 +34,17 @@ public class ElevatorPlatform : MonoBehaviour
             // Only show text if elevator isn't currently moving
             if (!_isMoving)
             {
-                _Text.SetActive(true); // Show the text object when player is near
+                // Show appropriate text based on elevator position
+                if (_isAtTop)
+                {
+                    _downText.SetActive(true);
+                    _upText.SetActive(false);
+                }
+                else
+                {
+                    _upText.SetActive(true);
+                    _downText.SetActive(false);
+                }
             }
 
             PlayerInputs _inputs = other.GetComponent<PlayerInputs>(); // Get player inputs
@@ -41,7 +53,9 @@ public class ElevatorPlatform : MonoBehaviour
                 return;
             }
 
-            _Text.SetActive(false); // Hide the text object after interaction
+            // Hide both text objects after interaction
+            _upText.SetActive(false);
+            _downText.SetActive(false);
 
             if (!_isAtTop) // Elevator is at the bottom
             {
@@ -62,7 +76,9 @@ public class ElevatorPlatform : MonoBehaviour
     {
         Debug.Log("Elevator Ascending");
         _isMoving = true; // Mark as moving
-        _Text.SetActive(false); // Ensure text is hidden
+        // Hide both text objects during movement
+        _upText.SetActive(false);
+        _downText.SetActive(false);
 
         _currentTime = 0f; // Reset timer for ascent
 
@@ -87,7 +103,9 @@ public class ElevatorPlatform : MonoBehaviour
     {
         Debug.Log("Elevator Descending");
         _isMoving = true; // Mark as moving
-        _Text.SetActive(false); // Ensure text is hidden
+        // Hide both text objects during movement
+        _upText.SetActive(false);
+        _downText.SetActive(false);
 
         _currentTime = 0f; // Reset timer for descent
 
@@ -118,7 +136,9 @@ public class ElevatorPlatform : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            _Text.SetActive(false);
+            // Hide both text objects when player leaves
+            _upText.SetActive(false);
+            _downText.SetActive(false);
         }
     }
 }

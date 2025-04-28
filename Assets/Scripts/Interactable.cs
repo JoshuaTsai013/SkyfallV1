@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.VFX;
 
 public class Interactable : MonoBehaviour
 {
@@ -14,6 +15,8 @@ public class Interactable : MonoBehaviour
     private PlayerStats _playerStats; // Reference to the player stats script
     [SerializeField]
     private GameObject _Text; // Reference to the text object for displaying messages
+    [SerializeField]
+    private VisualEffect _visualEffect; // Reference to the visual effect
 
     public enum InteractableType
     {
@@ -69,6 +72,11 @@ public class Interactable : MonoBehaviour
                     break;
             }
             _isUsed = true; // Mark as used to prevent re-triggering
+            if (_visualEffect != null)
+            {
+                _visualEffect.Stop(); // Play the visual effect
+            }
+            Destroy(gameObject, 2f); // Destroy the interactable object after 1 second
         }
     }
 
