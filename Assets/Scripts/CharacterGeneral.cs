@@ -45,7 +45,7 @@ public class CharacterGeneral : MonoBehaviour
                 Vector3 boomPos = transform.position + new Vector3(0, boomHeight, 0);
                 Instantiate(DieExplosion , boomPos, transform.rotation);
             }
-            currentHealth = maxHealth;
+            // currentHealth = maxHealth;
         }
     }
     private void Die()

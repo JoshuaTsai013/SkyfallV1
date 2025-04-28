@@ -17,6 +17,8 @@ public class Interactable : MonoBehaviour
     private GameObject _Text; // Reference to the text object for displaying messages
     [SerializeField]
     private VisualEffect _visualEffect; // Reference to the visual effect
+    [SerializeField]
+    private GameObject _useRepairText; // Reference to the text object for repair interaction
 
     public enum InteractableType
     {
@@ -66,6 +68,11 @@ public class Interactable : MonoBehaviour
                     if (_playerStats != null)
                     {
                         _playerStats.RepairAmount += _repairPickupAmount; // Repair the player
+                    }
+                    if (_useRepairText != null)
+                    {
+                        _useRepairText.SetActive(true); // Show the repair text
+                        Destroy(_useRepairText, 5f); // Destroy the repair text after 2 seconds
                     }
                     break;
                 default:

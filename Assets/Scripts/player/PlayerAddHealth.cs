@@ -10,7 +10,7 @@ public class PlayerAddHealth : MonoBehaviour
     [Header("Cached Components")]
     [SerializeField] private PlayerStats _playerStats;
 
-    [SerializeField] private GameObject _repairKitText; //RepairKit text object
+    [SerializeField] private GameObject _useRepairKitText; //RepairKit text object
 
     [SerializeField] private CharacterGeneral _characterGeneral;
 
@@ -24,12 +24,23 @@ public class PlayerAddHealth : MonoBehaviour
         {
             _playerStats = PlayerManager.instance.playerStats;
         }
-        if (_repairKitText != null)
+        if (_useRepairKitText != null)
         {
-            _repairKitText.SetActive(false); // Hide the repair kit text at the start
+            _useRepairKitText.SetActive(false); // Hide the repair kit text at the start
         }
     }
 
+    private void FixedUpdate()
+    {
+        if (_playerStats.RepairAmount > 0 && _characterGeneral.currentHealth <= 40f)
+        {
+            _useRepairKitText.SetActive(true);
+        }
+        else
+        {
+            _useRepairKitText.SetActive(false);
+        }
+    }
     public void AddHealth()
     {
         if (_isHealing || _inCooldown)
@@ -43,9 +54,9 @@ public class PlayerAddHealth : MonoBehaviour
             _isHealing = true;
             StartAddHealth(destroyCancellationToken).Forget();
             _playerStats.RepairAmount -= 1;
-            if (_repairKitText != null)
+            if (_useRepairKitText != null)
             {
-                _repairKitText.SetActive(false); // Hide the repair kit text after using it
+                _useRepairKitText.SetActive(false); // Hide the repair kit text after using it
             }
         }
         else

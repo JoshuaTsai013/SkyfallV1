@@ -37,10 +37,6 @@ public class PlayerRespawn : MonoBehaviour
 
     private void Awake()
     {
-        if (currentSpawnPoint == null)
-        {
-            currentSpawnPoint = transform;
-        }
         // Cache component references
         _thirdPersonController = GetComponent<ThirdPersonController>();
         _thirdPersonShooterController = GetComponent<ThirdPersonShooterController>();
@@ -50,6 +46,10 @@ public class PlayerRespawn : MonoBehaviour
 
     private void Start()
     {
+        if (currentSpawnPoint == null)
+        {
+            currentSpawnPoint = transform;
+        }
         // Get the CharacterGeneral component
         characterGeneral = GetComponent<CharacterGeneral>();
         // Subscribe to the OnDie event
@@ -85,7 +85,7 @@ public class PlayerRespawn : MonoBehaviour
         // Deactivate UI elements
         _PauseMenuUI.SetActive(false);
         _GameOverUI.SetActive(false);
-        _playerStats.ResetStats(); // Reset player stats
+        // _playerStats.ResetStats(); // Reset player stats
 
         // Enable player controls
         _mechModel.SetActive(true);
