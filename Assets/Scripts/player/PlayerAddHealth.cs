@@ -48,7 +48,8 @@ public class PlayerAddHealth : MonoBehaviour
                 _repairKitText.SetActive(false); // Hide the repair kit text after using it
             }
         }
-        else{
+        else
+        {
             Debug.Log("No repair kits available or health is already full.");
         }
     }
@@ -56,30 +57,28 @@ public class PlayerAddHealth : MonoBehaviour
     async UniTask StartAddHealth(CancellationToken cancellation)
     {
         float healthToAdd = Mathf.Min(_repairAmount, _characterGeneral.maxHealth - _characterGeneral.currentHealth);
-        float healingRate = healthToAdd / 10; // Divide healing into 10 small increments
-        float increments = 10;
 
-        for (int i = 0; i < increments; i++)
+        for (int i = 0; i < healthToAdd; i++)
         {
-            _characterGeneral.currentHealth = Mathf.Min(_characterGeneral.maxHealth, _characterGeneral.currentHealth + healingRate);
-            await UniTask.Delay((int)(_addHealthTime * 1000 / increments), cancellationToken: cancellation);
-            
+            _characterGeneral.currentHealth = Mathf.Min(_characterGeneral.maxHealth, _characterGeneral.currentHealth + 1);
+            await UniTask.Delay((int)(_addHealthTime * 1000 / healthToAdd), cancellationToken: cancellation);
+
             // Exit early if we've reached max health
             if (_characterGeneral.currentHealth >= _characterGeneral.maxHealth)
                 break;
         }
 
         // Ensure the health is exactly at the intended value (to handle floating point inaccuracies)
-        _characterGeneral.currentHealth = Mathf.Min(_characterGeneral.maxHealth, 
-            _characterGeneral.currentHealth + (healthToAdd - (healingRate * increments)));
-            
+        _characterGeneral.currentHealth = Mathf.Min(_characterGeneral.maxHealth,
+            _characterGeneral.currentHealth + (healthToAdd - (healthToAdd)));
+
         // Healing is complete, start cooldown
         _isHealing = false;
         _inCooldown = true;
-        
+
         // Wait for cooldown to finish
         await UniTask.Delay((int)(_cooldownDuration * 1000), cancellationToken: cancellation);
-        
+
         // Cooldown complete
         _inCooldown = false;
     }
