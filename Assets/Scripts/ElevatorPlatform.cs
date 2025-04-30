@@ -97,6 +97,16 @@ public class ElevatorPlatform : MonoBehaviour
         transform.position = targetPosition.position; // Ensure the final position is exact
         _isAtTop = true; // Mark elevator as being at the top
         _isMoving = false; // No longer moving
+        
+        // Add 15-second delay before automatically descending
+        Debug.Log("Waiting 15 seconds before auto-descent");
+        yield return new WaitForSeconds(15f);
+        
+        // Auto-descend after delay if still at the top
+        if (_isAtTop)
+        {
+            StartCoroutine(Descend());
+        }
     }
 
     private IEnumerator Descend()
@@ -117,9 +127,9 @@ public class ElevatorPlatform : MonoBehaviour
             transform.position = Vector3.MoveTowards(transform.position, _initialPosition, descendSpeed * speedFactor * Time.deltaTime);
 
 
-            Vector3 newPosition = PlayerManager.instance.player.transform.position;
-            newPosition.y = (float)(transform.position.y + 2.8); // Adjust the Y position
-            PlayerManager.instance.player.transform.position = newPosition; // Move the player with the elevator
+            // Vector3 newPosition = PlayerManager.instance.player.transform.position;
+            // newPosition.y = (float)(transform.position.y + 2.8); // Adjust the Y position
+            // PlayerManager.instance.player.transform.position = newPosition; // Move the player with the elevator
 
 
             yield return null; // Wait for the next frame

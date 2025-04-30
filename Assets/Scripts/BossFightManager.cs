@@ -10,6 +10,7 @@ public class BossFightManager : MonoBehaviour
     public Image BloodBarFill;
     [SerializeField] private CharacterGeneral _boss;
     [SerializeField] private FadeOutTransitionScreen _fadeOutTransitionScreen;
+    [SerializeField] private AudioSource _bossMusic;
     private bool _showBloodBar = false;
     private bool _isBossDead = false;
     private void Start()
@@ -31,6 +32,7 @@ public class BossFightManager : MonoBehaviour
             BossBloodBar.gameObject.SetActive(true);
             BossBloodBar.DOFade(1, 2f);
             _showBloodBar = true;
+            _bossMusic.Play();
             Debug.Log("Boss Fight Started!");
         }
     }
