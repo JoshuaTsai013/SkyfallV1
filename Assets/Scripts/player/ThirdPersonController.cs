@@ -136,6 +136,9 @@ public class ThirdPersonController : MonoBehaviour
         }
     }
 
+    public float AimbotAssistX;
+    public float AimbotAssistY;
+
     private void Awake()
     {
         // get a reference to our main camera
@@ -204,7 +207,7 @@ public class ThirdPersonController : MonoBehaviour
             //set the Rotation speed on Air
             _rotationSmoothTime = RotationSmoothTimeOnAir;
         }
-        
+
         if (_input.run && !heat.Overheated)
         {
             MoveSpeed = Grounded ? MoveSpeedOnGroundRun : MoveSpeedOnAirRun;
@@ -234,7 +237,8 @@ public class ThirdPersonController : MonoBehaviour
             _cinemachineTargetYaw += _input.look.x * deltaTimeMultiplier;
             _cinemachineTargetPitch += _input.look.y * deltaTimeMultiplier;
         }
-
+        _cinemachineTargetYaw += AimbotAssistX;
+        _cinemachineTargetPitch += AimbotAssistY;
         // clamp our rotations so our values are limited 360 degrees
         _cinemachineTargetYaw = ClampAngle(_cinemachineTargetYaw, float.MinValue, float.MaxValue);
         _cinemachineTargetPitch = ClampAngle(_cinemachineTargetPitch, BottomClamp, TopClamp);
