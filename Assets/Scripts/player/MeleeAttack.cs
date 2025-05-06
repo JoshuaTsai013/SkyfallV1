@@ -9,6 +9,7 @@ public class MeleeAttack : MonoBehaviour
     public float ChargeDuration = 1f;
     public float DrillingForwardSpeed = 1f;
     public float DrillDuration = 0.2f;
+    public float MeleeRotate = 5f;
     public GameObject meleeCam;
     public GameObject mainCam;
     [SerializeField]
@@ -47,15 +48,6 @@ public class MeleeAttack : MonoBehaviour
         }
     }
 
-    private void Update()
-    {
-        if (!_isDrillingForward)
-        {
-            return;
-        }
-        _controller.Move(Mathf.Lerp(DrillingForwardSpeed, 0, Time.deltaTime) * transform.forward);
-    }
-
     private IEnumerator MeleeDelay()
     {
         //charging
@@ -63,21 +55,31 @@ public class MeleeAttack : MonoBehaviour
         meleeCam.SetActive(true);
         _impulseSource.GenerateImpulse();
         _drill.DrillStart();
-        
+        transform.Rotate(Vector3.up, MeleeRotate);
         Debug.Log("Melee Attack!!");
         yield return new WaitForSeconds(ChargeDuration);
         //drillingForward
         _meleeCollider.SetActive(true);
 
         _isDrillingForward = true;
+        StartCoroutine(DrillingForward());
         meleeCam.SetActive(false);
         yield return new WaitForSeconds(DrillDuration);
         _isDrillingForward = false;
+        transform.Rotate(Vector3.up, -MeleeRotate);
         _drill.DrillStop();
         _meleeCollider.SetActive(false);
         _playerController.enabled = true;
         _playerShooterController.enabled = true;
         yield return new WaitForSeconds(MeleeColdDown);
         CanMelee = true;
+    }
+    private IEnumerator DrillingForward()
+    {
+        while (_isDrillingForward)
+        {
+            _controller.Move(Mathf.Lerp(DrillingForwardSpeed, 0, Time.deltaTime) * transform.forward);
+            yield return null;
+        }
     }
 }

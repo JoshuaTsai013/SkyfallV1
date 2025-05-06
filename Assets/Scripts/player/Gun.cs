@@ -9,6 +9,8 @@ public class Gun : MonoBehaviour
     [SerializeField]
     private VisualEffect ShootingSystem;
     [SerializeField]
+    private AnimatedCrosshair _crosshair;
+    [SerializeField]
     private ParticleSystem bulletShell;
     [SerializeField]
     private Transform _GunRoot;
@@ -57,6 +59,7 @@ public class Gun : MonoBehaviour
         if (LastShootTime + ShootDelay < Time.time)
         {
             ShootingSystem.Play();
+            _crosshair.AnimatedCrosshairFire();
             SoundManager.PlaySound(SoundType.SingleShot, 0.1f);
             PlayBulletShell();
             _playerStats.AmmoAmount--;
