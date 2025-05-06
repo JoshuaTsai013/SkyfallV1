@@ -14,7 +14,7 @@ public class Battleshipmanager : MonoBehaviour
     private IEnumerator LoadNextSceneWithDelay()
     {
         // Load the next scene after a delay
-        yield return new WaitForSeconds(20f); // Adjust the delay as needed
+        yield return new WaitForSeconds(25f); // Adjust the delay as needed
         fadeOutTransitionScreen.DOFade(1, 2.5f);
         yield return new WaitForSeconds(3f); // Wait for the fade-out to complete
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1); // Load the next scene

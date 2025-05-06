@@ -5,7 +5,11 @@ using UnityEngine.VFX;
 
 public class BattleshipCannon : MonoBehaviour
 {
-
+    [Header("Cannon Settings")]
+    [SerializeField]
+    private int _shootCount = 10;
+    [SerializeField]
+    private float _shootInterval = 1f;
     [SerializeField]
     private float Speed = 100;
     [SerializeField]
@@ -13,17 +17,29 @@ public class BattleshipCannon : MonoBehaviour
     [SerializeField]
 
     private TrailRenderer BulletTrail;
- 
+
     public AudioSource shootSound;
     [SerializeField]
     private CinemachineImpulseSource _impulseSource;
 
-    private void OnEnable()
+
+
+    private void Start()
     {
-        Shoot();
-        gameObject.SetActive(false); // Deactivate the cannon after shooting
+        _impulseSource = PlayerManager.instance.PlayerCamera.GetComponent<CinemachineImpulseSource>();
+        StartCoroutine(BattleshipCannonShooting());
     }
 
+    private IEnumerator BattleshipCannonShooting()
+    {
+        yield return new WaitForSeconds(10f);
+        for (int i = 0; i < _shootCount; i++)
+        {
+            Shoot();
+            yield return new WaitForSeconds(_shootInterval);
+            _shootInterval = Random.Range(2f, 4f);
+        }
+    }
     public void Shoot()
     {
         Vector3 direction = GunRoot.forward;
@@ -32,7 +48,7 @@ public class BattleshipCannon : MonoBehaviour
 
         AudioSource.PlayClipAtPoint(shootSound.clip, GunRoot.position);
         _impulseSource.GenerateImpulse();
-        
+
     }
 
     private IEnumerator SpawnTrail(TrailRenderer Trail, Vector3 _direction)
