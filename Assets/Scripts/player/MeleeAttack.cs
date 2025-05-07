@@ -68,7 +68,7 @@ public class MeleeAttack : MonoBehaviour
         _isDrillingForward = false;
         transform.Rotate(Vector3.up, -MeleeRotate);
         _drill.DrillStop();
-        _meleeCollider.SetActive(false);
+        
         _playerController.enabled = true;
         _playerShooterController.enabled = true;
         yield return new WaitForSeconds(MeleeColdDown);
@@ -81,5 +81,7 @@ public class MeleeAttack : MonoBehaviour
             _controller.Move(Mathf.Lerp(DrillingForwardSpeed, 0, Time.deltaTime) * transform.forward);
             yield return null;
         }
+        
+        _meleeCollider.SetActive(false);
     }
 }

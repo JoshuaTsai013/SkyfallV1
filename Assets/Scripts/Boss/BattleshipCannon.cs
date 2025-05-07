@@ -1,7 +1,6 @@
 using System.Collections;
 using Unity.Cinemachine;
 using UnityEngine;
-using UnityEngine.VFX;
 
 public class BattleshipCannon : MonoBehaviour
 {
@@ -17,6 +16,7 @@ public class BattleshipCannon : MonoBehaviour
     [SerializeField]
 
     private TrailRenderer BulletTrail;
+    public ParticleSystem ShootParticaleSystem;
 
     public AudioSource shootSound;
     [SerializeField]
@@ -26,7 +26,6 @@ public class BattleshipCannon : MonoBehaviour
 
     private void Start()
     {
-        _impulseSource = PlayerManager.instance.PlayerCamera.GetComponent<CinemachineImpulseSource>();
         StartCoroutine(BattleshipCannonShooting());
     }
 
@@ -45,7 +44,7 @@ public class BattleshipCannon : MonoBehaviour
         Vector3 direction = GunRoot.forward;
         TrailRenderer trail = Instantiate(BulletTrail, GunRoot.position, Quaternion.identity);
         StartCoroutine(SpawnTrail(trail, direction));
-
+        ShootParticaleSystem.Play();
         AudioSource.PlayClipAtPoint(shootSound.clip, GunRoot.position);
         _impulseSource.GenerateImpulse();
 
