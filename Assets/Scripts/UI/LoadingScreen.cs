@@ -39,6 +39,8 @@ public class LoadingScreen : MonoBehaviour
     }
     async UniTask RunToLoading(CancellationToken cancellation)
     {
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
         StartParticles.Stop();
         StartText.DOFade(0, 0.6f);
         Title.DOFade(0, 1f);

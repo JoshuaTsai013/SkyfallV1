@@ -5,6 +5,7 @@ using System.Threading;
 public class GunReload : MonoBehaviour
 {
     private PlayerStats _playerStats;
+    [SerializeField] private GameObject _ReloadHintText; //RepairKit text object
 
     private void Start()
     {
@@ -15,7 +16,13 @@ public class GunReload : MonoBehaviour
             Debug.LogError("PlayerStats component not found on PlayerManager instance.");
         }
     }
-
+    private void FixedUpdate()
+    {
+        if (_playerStats.AmmoAmount < 10 && !_playerStats.IsReloading)
+        {
+            _ReloadHintText.SetActive(true);
+        }
+    }
     public void Reload()
     {
         // Check if the player has ammo and if the magazine is not full
@@ -26,6 +33,7 @@ public class GunReload : MonoBehaviour
         SoundManager.PlaySound(SoundType.Reload, 0.4f);
         // Start reloading
         StartReload(destroyCancellationToken).Forget();
+        _ReloadHintText.SetActive(false);
     }
 
     async UniTask StartReload(CancellationToken cancellation)
