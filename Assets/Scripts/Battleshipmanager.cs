@@ -5,17 +5,15 @@ using UnityEngine.SceneManagement;
 
 public class Battleshipmanager : MonoBehaviour
 {
-    public CanvasGroup fadeOutTransitionScreen; // Reference to the fade-out transition screen
-    private void Start()
+    public FadeOutTransitionScreen fadeOutTransitionScreen; // Reference to the fade-out transition screen
+    public void LoadNextScene()
     {
-        // StartCoroutine(LoadNextSceneWithDelay());
+        // Start the coroutine to load the next scene
+        StartCoroutine(LoadNextSceneWithDelay());
     }
-
     private IEnumerator LoadNextSceneWithDelay()
     {
-        // Load the next scene after a delay
-        yield return new WaitForSeconds(25f); // Adjust the delay as needed
-        fadeOutTransitionScreen.DOFade(1, 2.5f);
+        fadeOutTransitionScreen.FadeIn(); // Fade in the transition screen
         yield return new WaitForSeconds(3f); // Wait for the fade-out to complete
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1); // Load the next scene
     }

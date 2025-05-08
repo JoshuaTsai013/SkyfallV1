@@ -88,11 +88,8 @@ public class PlayerRespawn : MonoBehaviour
         // _playerStats.ResetStats(); // Reset player stats
 
         // Enable player controls
-        _mechModel.SetActive(true);
-        _thirdPersonController.enabled = true;
-        _thirdPersonShooterController.enabled = true;
-        _meleeAttack.enabled = true;
-        _playerInput.enabled = true;
+        EnablePlayerControl();
+        ShowMechModel();
         // Reset player state
         _isDied = false;
         characterGeneral.currentHealth = characterGeneral.maxHealth;
@@ -113,12 +110,9 @@ public class PlayerRespawn : MonoBehaviour
     {
         _isDied = true;
         Time.timeScale = 1.0f;
-        _mechModel.SetActive(false);
-        _thirdPersonController.enabled = false;
-        _thirdPersonShooterController.enabled = false;
-        _meleeAttack.enabled = false;
-        _playerInput.enabled = false;
 
+        DisablePlayerControl();
+        HideMechModel();
         int colliderCount = Physics.OverlapSphereNonAlloc(transform.position + explosionPositionOffset, explosionRadius, _collidersBuffer);
         for (int i = 0; i < colliderCount; i++)
         {
@@ -141,5 +135,28 @@ public class PlayerRespawn : MonoBehaviour
         {
             characterGeneral.OnDie.RemoveListener(HandleDie);
         }
+    }
+
+    public void DisablePlayerControl()
+    {
+        _thirdPersonController.enabled = false;
+        _thirdPersonShooterController.enabled = false;
+        _meleeAttack.enabled = false;
+        _playerInput.enabled = false;
+    }
+    public void EnablePlayerControl()
+    {
+        _thirdPersonController.enabled = true;
+        _thirdPersonShooterController.enabled = true;
+        _meleeAttack.enabled = true;
+        _playerInput.enabled = true;
+    }
+    public void HideMechModel()
+    {
+        _mechModel.SetActive(false);
+    }
+    public void ShowMechModel()
+    {
+        _mechModel.SetActive(true);
     }
 }

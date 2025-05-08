@@ -17,8 +17,7 @@ public class TrainingManager : MonoBehaviour
     public TrainingTrigger ShootCollider;
     public TrainingTrigger MeleeCollider;
     public TrainingTrigger OverheatCollider;
-    public TrainingTrigger ExitCollider;
-
+    
     public TrainingDoorOpen door;
     public FadeOutTransitionScreen fadeOutTransitionScreen;
 
