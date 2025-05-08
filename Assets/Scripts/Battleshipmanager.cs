@@ -8,7 +8,7 @@ public class Battleshipmanager : MonoBehaviour
     public CanvasGroup fadeOutTransitionScreen; // Reference to the fade-out transition screen
     private void Start()
     {
-        StartCoroutine(LoadNextSceneWithDelay());
+        // StartCoroutine(LoadNextSceneWithDelay());
     }
 
     private IEnumerator LoadNextSceneWithDelay()
