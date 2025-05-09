@@ -7,11 +7,11 @@ public class Aimbot : MonoBehaviour
     [Header("Aim Assist Settings")]
     [SerializeField] private float assistStrength = 5f; // Higher values = faster aim correction
     [SerializeField] private LayerMask targetLayers; // Set to layers containing enemies
-    [SerializeField] private Vector3 targetOffset = new(0, 1.5f, 0); // Aim at head level
+    public Vector3 targetOffset = new(0, 1.5f, 0); // Aim at head level
     [SerializeField] private bool debugMode = false;
 
     [Header("Screen Raycast Settings")]
-    [SerializeField] private float screenScanRadius = 0.3f; // Radius around screen center to scan (0-1 range)
+    public float screenScanRadius = 0.3f; // Radius around screen center to scan (0-1 range)
     [SerializeField] private int scanResolution = 9; // Number of rays to cast (higher = more accurate but more expensive)
     [SerializeField] private float maxRayDistance = 100f; // Maximum distance for raycasts
 

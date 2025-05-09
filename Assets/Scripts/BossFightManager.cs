@@ -11,8 +11,10 @@ public class BossFightManager : MonoBehaviour
     [SerializeField] private CharacterGeneral _boss;
     [SerializeField] private FadeOutTransitionScreen _fadeOutTransitionScreen;
     [SerializeField] private AudioSource _bossMusic;
+
     private bool _showBloodBar = false;
     private bool _isBossDead = false;
+    public Aimbot _aimbot;
     private void Start()
     {
         if (_boss)
@@ -33,6 +35,9 @@ public class BossFightManager : MonoBehaviour
             BossBloodBar.DOFade(1, 2f);
             _showBloodBar = true;
             _bossMusic.Play();
+            _aimbot.targetOffset = new Vector3(0,8.3f, 0);
+            _aimbot.screenScanRadius = 0.5f;
+
             Debug.Log("Boss Fight Started!");
         }
     }
