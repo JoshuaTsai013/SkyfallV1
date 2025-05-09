@@ -134,7 +134,7 @@ public class PauseMenu : MonoBehaviour
         ClosePauseMenu();
         _fadeOutTransitionScreen.FadeIn();
         yield return new WaitForSecondsRealtime(3.0f); // Wait for 0.2 seconds in real-time
-        // SceneManager.LoadScene(0);
-        Application.Quit();
+        SceneManager.LoadScene(0);
+        // Application.Quit();
     }
 }
