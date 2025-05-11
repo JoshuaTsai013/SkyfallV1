@@ -30,11 +30,23 @@ public class PlayerInputs : MonoBehaviour
     private bool isPressed = false;
     private float pressStartTime;
 
+    private float lastMouseMoveTime;
+    private float lastControllerMoveTime;
+
+    void Awake()
+    {
+        // Initial device setup
+        isUsingController = Gamepad.all.Count > 0 && Gamepad.current != null;
+    }
+
     void OnEnable()
     {
         action.Enable();
         action.started += OnStarted;
         action.canceled += OnCanceled;
+
+        // Register to device change events
+        InputSystem.onDeviceChange += OnDeviceChange;
     }
 
     void OnDisable()
@@ -42,6 +54,55 @@ public class PlayerInputs : MonoBehaviour
         action.started -= OnStarted;
         action.canceled -= OnCanceled;
         action.Disable();
+
+        // Unregister from device change events
+        InputSystem.onDeviceChange -= OnDeviceChange;
+    }
+
+    void Update()
+    {
+        // Check for mouse movement
+        if (Mouse.current != null && (Mouse.current.delta.ReadValue().sqrMagnitude > 0.1f || 
+            Mouse.current.leftButton.wasPressedThisFrame || Mouse.current.rightButton.wasPressedThisFrame))
+        {
+            lastMouseMoveTime = Time.time;
+        }
+
+        // Check for keyboard input
+        if (Keyboard.current != null && Keyboard.current.anyKey.isPressed)
+        {
+            lastMouseMoveTime = Time.time;
+        }
+
+        // Check for controller input
+        if (Gamepad.current != null && (
+            Gamepad.current.leftStick.ReadValue().sqrMagnitude > 0.1f || 
+            Gamepad.current.rightStick.ReadValue().sqrMagnitude > 0.1f ||
+            Gamepad.current.buttonSouth.wasPressedThisFrame || 
+            Gamepad.current.buttonEast.wasPressedThisFrame ||
+            Gamepad.current.buttonWest.wasPressedThisFrame || 
+            Gamepad.current.buttonNorth.wasPressedThisFrame))
+        {
+            lastControllerMoveTime = Time.time;
+        }
+
+        // Update the control method based on latest input
+        if (lastControllerMoveTime > lastMouseMoveTime)
+        {
+            if (!isUsingController)
+            {
+                isUsingController = true;
+                Debug.Log("Switched to controller input");
+            }
+        }
+        else if (lastMouseMoveTime > lastControllerMoveTime)
+        {
+            if (isUsingController)
+            {
+                isUsingController = false;
+                Debug.Log("Switched to keyboard/mouse input");
+            }
+        }
     }
 
     private void OnStarted(InputAction.CallbackContext context)
@@ -192,10 +253,24 @@ public class PlayerInputs : MonoBehaviour
 
     public void OnDeviceChange(InputDevice device, InputDeviceChange change)
     {
+        // Still keep the connection/disconnection logic
         if (change == InputDeviceChange.Added || change == InputDeviceChange.Reconnected)
         {
-            isUsingController = device is Gamepad;
-            Debug.Log("Using"+ device);
+            if (device is Gamepad)
+            {
+                // Update the timestamp but don't force controller mode
+                // just because a controller was connected
+                lastControllerMoveTime = Time.time;
+            }
+            Debug.Log("Device connected: " + device);
+        }
+        else if (change == InputDeviceChange.Removed || change == InputDeviceChange.Disconnected)
+        {
+            if (device is Gamepad && isUsingController && Gamepad.all.Count == 0)
+            {
+                isUsingController = false;
+                Debug.Log("Controller disconnected, switching to keyboard/mouse");
+            }
         }
     }
 

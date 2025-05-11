@@ -11,13 +11,13 @@ public class MeleeAttack : MonoBehaviour
     public float DrillDuration = 0.2f;
     public float MeleeRotate = 5f;
     public GameObject meleeCam;
-    public GameObject mainCam;
     [SerializeField]
     private Animator _animator;
     [SerializeField]
     private Drill _drill;
 
     public bool CanMelee;
+    public bool IsDrilling = false;
     private bool _isDrillingForward;
 
     private CharacterController _controller;
@@ -41,8 +41,9 @@ public class MeleeAttack : MonoBehaviour
     {
         if (CanMelee)
         {
+            IsDrilling = true;
             CanMelee = false;
-            _playerController.enabled = false;
+            // _playerController.enabled = false;
             _playerShooterController.enabled = false;
             StartCoroutine(MeleeDelay());
         }
@@ -55,7 +56,7 @@ public class MeleeAttack : MonoBehaviour
         meleeCam.SetActive(true);
         _impulseSource.GenerateImpulse();
         _drill.DrillStart();
-        transform.Rotate(Vector3.up, MeleeRotate);
+        // transform.Rotate(Vector3.up, MeleeRotate);
         Debug.Log("Melee Attack!!");
         yield return new WaitForSeconds(ChargeDuration);
         //drillingForward
@@ -66,10 +67,10 @@ public class MeleeAttack : MonoBehaviour
         meleeCam.SetActive(false);
         yield return new WaitForSeconds(DrillDuration);
         _isDrillingForward = false;
-        transform.Rotate(Vector3.up, -MeleeRotate);
+        // transform.Rotate(Vector3.up, -MeleeRotate);
         _drill.DrillStop();
-        
-        _playerController.enabled = true;
+        IsDrilling = false;
+        // _playerController.enabled = true;
         _playerShooterController.enabled = true;
         yield return new WaitForSeconds(MeleeColdDown);
         CanMelee = true;
@@ -81,7 +82,7 @@ public class MeleeAttack : MonoBehaviour
             _controller.Move(Mathf.Lerp(DrillingForwardSpeed, 0, Time.deltaTime) * transform.forward);
             yield return null;
         }
-        
+        yield return new WaitForSeconds(0.2f);
         _meleeCollider.SetActive(false);
     }
 }

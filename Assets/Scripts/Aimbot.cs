@@ -20,8 +20,10 @@ public class Aimbot : MonoBehaviour
 
     private ThirdPersonShooterController shooterController;
     private ThirdPersonController playerController;
+    private PlayerInputs playerInputs;
     public List<Transform> potentialTargets = new();
     private Transform currentTarget;
+    private MeleeAttack meleeAttack;
 
     void Start()
     {
@@ -30,6 +32,8 @@ public class Aimbot : MonoBehaviour
 
         shooterController = GetComponent<ThirdPersonShooterController>();
         playerController = GetComponent<ThirdPersonController>();
+        playerInputs = GetComponent<PlayerInputs>();
+        meleeAttack = GetComponent<MeleeAttack>();
     }
 
     void Update()
@@ -42,7 +46,7 @@ public class Aimbot : MonoBehaviour
         }
 
         // Only activate aim assist when the player is aiming
-        if (shooterController != null && shooterController.isAiming)
+        if ((playerInputs.isUsingController && shooterController.isAiming) || meleeAttack.IsDrilling)
         {
             FindPotentialTargets();
 
