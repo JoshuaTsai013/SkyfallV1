@@ -11,9 +11,11 @@ public class ThirdPersonShooterController : MonoBehaviour
     [SerializeField]
     private Gun _gun;
     private float _GunAngle;
+    private Aimbot _aimbot;
     private void Start()
     {
         Inputs = GetComponent<PlayerInputs>();
+        _aimbot = GetComponent<Aimbot>();
     }
     private void Update()
     {
@@ -32,6 +34,7 @@ public class ThirdPersonShooterController : MonoBehaviour
             cross.SetActive(false);
             _animator.SetBool("Aim", false);
             _animator.SetFloat("GunAngle", 0f);
+            _aimbot.useAimAssist = false;
         }
 
         if (Inputs.shoot)
@@ -42,6 +45,11 @@ public class ThirdPersonShooterController : MonoBehaviour
         else
         {
             _animator.SetBool("Shoot", false);
+        }
+
+        if (isAiming && Inputs.isUsingController)
+        {
+            _aimbot.useAimAssist = true;
         }
     }
 

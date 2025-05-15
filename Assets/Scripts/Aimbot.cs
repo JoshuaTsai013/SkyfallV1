@@ -5,6 +5,7 @@ using System;
 public class Aimbot : MonoBehaviour
 {
     [Header("Aim Assist Settings")]
+    public bool useAimAssist = false; // Enable or disable aim assist
     [SerializeField] private float assistStrength = 5f; // Higher values = faster aim correction
     [SerializeField] private LayerMask targetLayers; // Set to layers containing enemies
     public Vector3 targetOffset = new(0, 1.5f, 0); // Aim at head level
@@ -46,7 +47,7 @@ public class Aimbot : MonoBehaviour
         }
 
         // Only activate aim assist when the player is aiming
-        if ((playerInputs.isUsingController && shooterController.isAiming) || meleeAttack.IsDrilling)
+        if (useAimAssist)
         {
             FindPotentialTargets();
 

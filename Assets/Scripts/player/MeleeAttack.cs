@@ -21,19 +21,20 @@ public class MeleeAttack : MonoBehaviour
     private bool _isDrillingForward;
 
     private CharacterController _controller;
-    private ThirdPersonController _playerController;
+
     private ThirdPersonShooterController _playerShooterController;
+    [SerializeField]
     private CinemachineImpulseSource _impulseSource;
     [SerializeField]
     private GameObject _meleeCollider;
+    private Aimbot _aimbot;
 
 
     private void Start()
     {
         _controller = GetComponent<CharacterController>();
-        _playerController = PlayerManager.instance.player.GetComponent<ThirdPersonController>();
-        _playerShooterController = PlayerManager.instance.player.GetComponent<ThirdPersonShooterController>();
-        _impulseSource = PlayerManager.instance.PlayerCamera.GetComponent<CinemachineImpulseSource>();
+        _playerShooterController = GetComponent<ThirdPersonShooterController>();
+        _aimbot = GetComponent<Aimbot>();
         _meleeCollider.SetActive(false);
         CanMelee = true;
     }
@@ -43,7 +44,6 @@ public class MeleeAttack : MonoBehaviour
         {
             IsDrilling = true;
             CanMelee = false;
-            // _playerController.enabled = false;
             _playerShooterController.enabled = false;
             StartCoroutine(MeleeDelay());
         }
@@ -56,7 +56,7 @@ public class MeleeAttack : MonoBehaviour
         meleeCam.SetActive(true);
         _impulseSource.GenerateImpulse();
         _drill.DrillStart();
-        // transform.Rotate(Vector3.up, MeleeRotate);
+        _aimbot.useAimAssist = true;
         Debug.Log("Melee Attack!!");
         yield return new WaitForSeconds(ChargeDuration);
         //drillingForward
@@ -67,10 +67,9 @@ public class MeleeAttack : MonoBehaviour
         meleeCam.SetActive(false);
         yield return new WaitForSeconds(DrillDuration);
         _isDrillingForward = false;
-        // transform.Rotate(Vector3.up, -MeleeRotate);
         _drill.DrillStop();
+        _aimbot.useAimAssist = false;
         IsDrilling = false;
-        // _playerController.enabled = true;
         _playerShooterController.enabled = true;
         yield return new WaitForSeconds(MeleeColdDown);
         CanMelee = true;
