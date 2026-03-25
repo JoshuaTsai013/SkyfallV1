@@ -87,6 +87,25 @@ public class PauseMenu : MonoBehaviour
         _isPaused = true;
 
     }
+
+    private void OnApplicationFocus(bool hasFocus)
+    {
+        if (hasFocus && _isPaused)
+        {
+            StartCoroutine(ReapplyPauseCursorNextFrame());
+        }
+    }
+
+    private IEnumerator ReapplyPauseCursorNextFrame()
+    {
+        // Reapply once immediately and once next frame in case another script overrides cursor state on focus regain.
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.None;
+        yield return null;
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.None;
+    }
+
     public void ClosePauseMenu()
     {
         if (!_isPaused)

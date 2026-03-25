@@ -10,7 +10,8 @@ public enum SoundType
     Drill,
     EmptyShell,
     Reload,
-    Engine
+    Engine,
+    Explosion,
 }
 
 [RequireComponent(typeof(AudioSource))]

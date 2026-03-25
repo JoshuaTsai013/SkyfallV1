@@ -31,12 +31,12 @@ public class BattleshipCannon : MonoBehaviour
 
     private IEnumerator BattleshipCannonShooting()
     {
-        yield return new WaitForSeconds(10f);
+        yield return new WaitForSeconds(Random.Range(9f, 12f));
         for (int i = 0; i < _shootCount; i++)
         {
             Shoot();
             yield return new WaitForSeconds(_shootInterval);
-            _shootInterval = Random.Range(2f, 4f);
+            _shootInterval = Random.Range(_shootInterval - 0.4f, _shootInterval + 0.4f);
         }
     }
     public void Shoot()
@@ -46,6 +46,7 @@ public class BattleshipCannon : MonoBehaviour
         StartCoroutine(SpawnTrail(trail, direction));
         ShootParticaleSystem.Play();
         AudioSource.PlayClipAtPoint(shootSound.clip, GunRoot.position);
+        SoundManager.PlaySound(SoundType.Explosion, Random.Range(0.2f, 0.3f));
         _impulseSource.GenerateImpulse();
 
     }
