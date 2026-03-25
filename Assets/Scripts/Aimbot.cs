@@ -17,24 +17,18 @@ public class Aimbot : MonoBehaviour
     [SerializeField] private float maxRayDistance = 100f; // Maximum distance for raycasts
 
     [Header("References")]
-    [SerializeField] private Camera mainCamera; // Reference to the main camera
+    public Camera mainCamera; // Reference to the main camera
 
-    private ThirdPersonShooterController shooterController;
     private ThirdPersonController playerController;
-    private PlayerInputs playerInputs;
     public List<Transform> potentialTargets = new();
     private Transform currentTarget;
-    private MeleeAttack meleeAttack;
 
     void Start()
     {
         if (mainCamera == null)
             mainCamera = Camera.main;
 
-        shooterController = GetComponent<ThirdPersonShooterController>();
         playerController = GetComponent<ThirdPersonController>();
-        playerInputs = GetComponent<PlayerInputs>();
-        meleeAttack = GetComponent<MeleeAttack>();
     }
 
     void Update()

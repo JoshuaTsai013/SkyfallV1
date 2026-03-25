@@ -28,7 +28,8 @@ public class MeleeAttack : MonoBehaviour
     [SerializeField]
     private GameObject _meleeCollider;
     private Aimbot _aimbot;
-
+    private float _rotationVelocity;
+    private float _targetRotation;
 
     private void Start()
     {
@@ -76,8 +77,14 @@ public class MeleeAttack : MonoBehaviour
     }
     private IEnumerator DrillingForward()
     {
+        _targetRotation = _aimbot.mainCamera.transform.eulerAngles.y;
         while (_isDrillingForward)
         {
+            float rotation = Mathf.SmoothDampAngle(transform.eulerAngles.y, _targetRotation, ref _rotationVelocity,
+                    0.1f);
+
+            // rotate to face input direction relative to camera position
+            transform.rotation = Quaternion.Euler(0.0f, rotation, 0.0f);
             _controller.Move(Mathf.Lerp(DrillingForwardSpeed, 0, Time.deltaTime) * transform.forward);
             yield return null;
         }

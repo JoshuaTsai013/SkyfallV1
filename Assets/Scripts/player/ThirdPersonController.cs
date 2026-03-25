@@ -156,7 +156,7 @@ public class ThirdPersonController : MonoBehaviour
         _input = GetComponent<PlayerInputs>();
         _playerInput = GetComponent<PlayerInput>();
 
-        heat = PlayerManager.instance.player.GetComponent<Heat>();
+        heat = GetComponent<Heat>();
         _rotationSmoothTime = RotationSmoothTimeOnGround;
         _jumpTimeoutDelta = JumpTimeout;
         _fallTimeoutDelta = FallTimeout;
