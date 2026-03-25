@@ -6,46 +6,84 @@ using UnityEngine.UI;
 
 public class BossFightManager : MonoBehaviour
 {
+    private static WaitForSecondsRealtime _waitForSecondsRealtime3_0 = new(3.0f);
+    private static WaitForSecondsRealtime _waitForSecondsRealtime1 = new(1f);
     public CanvasGroup BossBloodBar;
     public Image BloodBarFill;
     [SerializeField] private CharacterGeneral _boss;
     [SerializeField] private FadeOutTransitionScreen _fadeOutTransitionScreen;
     [SerializeField] private AudioSource _bossMusic;
-
+    [SerializeField] private Transform _playerRespawnPoint; // Arena entrance — assign in Inspector
+    private CharacterGeneral _characterGeneral;
     private bool _showBloodBar = false;
     private bool _isBossDead = false;
     public Aimbot _aimbot;
+    private Coroutine _bloodBarCoroutine;
+
+    // Saved pre-fight state
+    private Vector3 _bossInitialPosition;
+    private Quaternion _bossInitialRotation;
+    private float _bossInitialHealth;
+    private Vector3 _aimbotInitialTargetOffset;
+    private float _aimbotInitialScreenScanRadius;
+
     private void Start()
     {
         if (_boss)
         {
             _boss.OnDie.AddListener(HandleDie);
+            _bossInitialPosition = _boss.transform.position;
+            _bossInitialRotation = _boss.transform.rotation;
+            _bossInitialHealth = _boss.maxHealth;
+        }
+        if (_aimbot)
+        {
+            _aimbotInitialTargetOffset = _aimbot.targetOffset;
+            _aimbotInitialScreenScanRadius = _aimbot.screenScanRadius;
         }
         BloodBarFill.fillAmount = 1;
         BossBloodBar.alpha = 0f;
         BossBloodBar.gameObject.SetActive(false);
     }
-    //start Boss Fight
+
+    // Start Boss Fight on trigger enter
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player") && !_showBloodBar)
         {
+            // Now safe to refresh the spawn override with current entrance position
+            // (previous override kept the player safe during respawn after last death)
+            Vector3 spawnPos = _playerRespawnPoint != null ? _playerRespawnPoint.position : transform.position;
+            Quaternion spawnRot = _playerRespawnPoint != null ? _playerRespawnPoint.rotation : transform.rotation;
+            PlayerRespawn.SetSpawnOverride(spawnPos, spawnRot);
+
+            // Lock respawn to arena entrance as fixed values — immune to checkpoint overrides
+            Transform respawnTr = _playerRespawnPoint != null ? _playerRespawnPoint : transform;
+            PlayerRespawn.SetSpawnOverride(respawnTr.position, respawnTr.rotation);
             StartBossFight();
             BossBloodBar.gameObject.SetActive(true);
             BossBloodBar.DOFade(1, 2f);
             _showBloodBar = true;
             _bossMusic.Play();
-            _aimbot.targetOffset = new Vector3(0,8.3f, 0);
+            _aimbot.targetOffset = new Vector3(0, 8.3f, 0);
             _aimbot.screenScanRadius = 0.5f;
 
+            _characterGeneral = other.GetComponent<CharacterGeneral>();
+            if (_characterGeneral)
+            {
+                _characterGeneral.OnDie.AddListener(PlayerDie);
+            }
             Debug.Log("Boss Fight Started!");
         }
     }
 
     private void StartBossFight()
     {
-        StartCoroutine(UpdateBossBloodBar());
+        StopAllCoroutines();
+        _isBossDead = false;
+        _bloodBarCoroutine = StartCoroutine(UpdateBossBloodBar());
     }
+
     private IEnumerator UpdateBossBloodBar()
     {
         while (!_isBossDead)
@@ -54,16 +92,71 @@ public class BossFightManager : MonoBehaviour
             yield return null;
         }
     }
+
     private void HandleDie()
     {
         _isBossDead = true;
         StartCoroutine(EndGameDelay());
     }
+
+    // Handle player death: wait 1 seconds then restore pre-fight state
+    private void PlayerDie()
+    {
+        Debug.Log("Player died during boss fight - resetting boss fight in 1 seconds");
+
+        // Unsubscribe immediately to prevent duplicate calls
+        if (_characterGeneral != null)
+        {
+            _characterGeneral.OnDie.RemoveListener(PlayerDie);
+            _characterGeneral = null;
+        }
+
+        StartCoroutine(ResetBossFightAfterDelay());
+    }
+
+    private IEnumerator ResetBossFightAfterDelay()
+    {
+        yield return _waitForSecondsRealtime1;
+
+        if (_bloodBarCoroutine != null)
+        {
+            StopCoroutine(_bloodBarCoroutine);
+            _bloodBarCoroutine = null;
+        }
+        if (_boss)
+        {
+            _boss.transform.SetPositionAndRotation(_bossInitialPosition, _bossInitialRotation);
+            _boss.currentHealth = _bossInitialHealth;
+        }
+        if (_aimbot)
+        {
+            _aimbot.targetOffset = _aimbotInitialTargetOffset;
+            _aimbot.screenScanRadius = _aimbotInitialScreenScanRadius;
+        }
+
+        // Stop music
+        _bossMusic.Stop();
+        _bossMusic.time = 0f;
+
+        // Hide blood bar
+        BossBloodBar.DOKill();
+        BossBloodBar.alpha = 0f;
+        BossBloodBar.gameObject.SetActive(false);
+        BloodBarFill.fillAmount = 1f;
+
+        // Reset flags — allow OnTriggerEnter to fire again
+        _showBloodBar = false;
+        _isBossDead = false;
+
+        // DO NOT clear spawn override here — player hasn't respawned yet
+        // Override is cleared only when player re-enters the arena in OnTriggerEnter
+    }
+
     private IEnumerator EndGameDelay()
     {
         BossBloodBar.DOFade(0, 0.2f);
         _fadeOutTransitionScreen.FadeIn();
-        yield return new WaitForSecondsRealtime(3.0f);
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+        yield return _waitForSecondsRealtime3_0;
+        SceneManager.LoadScene(4);
     }
 }

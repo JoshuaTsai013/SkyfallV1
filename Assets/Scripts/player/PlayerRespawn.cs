@@ -7,7 +7,23 @@ using System.Collections;
 public class PlayerRespawn : MonoBehaviour
 {
     [Header("Spawn Point")]// The current spawn point for the player. This is set by the Checkpoint script when the player reaches a checkpoint.
-    private static Transform currentSpawnPoint;
+    public static Transform currentSpawnPoint;
+    // Fixed-value priority override — takes precedence over currentSpawnPoint, immune to checkpoint updates
+    private static bool _hasSpawnOverride = false;
+    private static Vector3 _spawnOverridePosition;
+    private static Quaternion _spawnOverrideRotation;
+
+    // Set a fixed spawn position that overrides any checkpoint (use for boss arenas, scripted sequences)
+    public static void SetSpawnOverride(Vector3 position, Quaternion rotation)
+    {
+        _spawnOverridePosition = position;
+        _spawnOverrideRotation = rotation;
+        _hasSpawnOverride = true;
+    }
+    public static void ClearSpawnOverride()
+    {
+        _hasSpawnOverride = false;
+    }
 
     [Header("UI Inital State")]//set all to active false;
     [SerializeField] private GameObject _PauseMenuUI;
@@ -33,23 +49,29 @@ public class PlayerRespawn : MonoBehaviour
     private PlayerInput _playerInput;
 
     private CharacterGeneral characterGeneral;
+    private CharacterController _characterController;
     private readonly Collider[] _collidersBuffer = new Collider[100]; // Preallocate buffer for colliders
+
+    // Default spawn captured at scene start (not a live transform reference)
+    private Vector3 _defaultSpawnPosition;
+    private Quaternion _defaultSpawnRotation;
 
     private void Awake()
     {
+        currentSpawnPoint = null;
         // Cache component references
         _thirdPersonController = GetComponent<ThirdPersonController>();
         _thirdPersonShooterController = GetComponent<ThirdPersonShooterController>();
         _meleeAttack = GetComponent<MeleeAttack>();
         _playerInput = GetComponent<PlayerInput>();
+        _characterController = GetComponent<CharacterController>();
     }
 
     private void Start()
     {
-        if (currentSpawnPoint == null)
-        {
-            currentSpawnPoint = transform;
-        }
+        // Snapshot the starting position as fixed values (not a self-reference)
+        _defaultSpawnPosition = transform.position;
+        _defaultSpawnRotation = transform.rotation;
         // Get the CharacterGeneral component
         characterGeneral = GetComponent<CharacterGeneral>();
         // Subscribe to the OnDie event
@@ -68,11 +90,6 @@ public class PlayerRespawn : MonoBehaviour
 
     public void Respawn()
     {
-        if (currentSpawnPoint == null)
-        {
-            Debug.LogError("No spawn point set!");
-            return;
-        }
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
         StartCoroutine(RespawnDelay());
@@ -85,16 +102,21 @@ public class PlayerRespawn : MonoBehaviour
         // Deactivate UI elements
         _PauseMenuUI.SetActive(false);
         _GameOverUI.SetActive(false);
-        // _playerStats.ResetStats(); // Reset player stats
 
-        // Enable player controls
-        EnablePlayerControl();
-        ShowMechModel();
+        // Disable CharacterController BEFORE teleporting — it overrides transform.SetPositionAndRotation when active
+        if (_characterController) _characterController.enabled = false;
+        Vector3 spawnPos = _hasSpawnOverride ? _spawnOverridePosition : (currentSpawnPoint != null ? currentSpawnPoint.position : _defaultSpawnPosition);
+        Quaternion spawnRot = _hasSpawnOverride ? _spawnOverrideRotation : (currentSpawnPoint != null ? currentSpawnPoint.rotation : _defaultSpawnRotation);
+        transform.SetPositionAndRotation(spawnPos, spawnRot);
+        if (_characterController) _characterController.enabled = true;
+
         // Reset player state
         _isDied = false;
         characterGeneral.currentHealth = characterGeneral.maxHealth;
-        // Move player
-        transform.SetPositionAndRotation(currentSpawnPoint.position, currentSpawnPoint.rotation);
+
+        // Enable player controls and show model only after position is set
+        EnablePlayerControl();
+        ShowMechModel();
     }
 
     private void HandleDie()

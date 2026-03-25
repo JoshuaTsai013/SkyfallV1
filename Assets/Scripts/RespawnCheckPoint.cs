@@ -1,12 +1,21 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class RespawnCheckPoint : MonoBehaviour
 {
-    private void OnTriggerStay(Collider other)
+    [SerializeField] private Transform _respawnPoint;
+    private void Start()
+    {
+        if (_respawnPoint == null)
+        {
+            _respawnPoint = transform;
+        }
+    }
+    private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
         {
-            PlayerRespawn.SetSpawnPoint(transform);
+            PlayerRespawn.SetSpawnPoint(_respawnPoint);
             Debug.Log("Checkpoint Set: " + gameObject.name);
         }
     }
