@@ -23,6 +23,7 @@ public class PlayerInputs : MonoBehaviour
     public bool isUsingController;
     public float normalSensitivity = 1.0f;
     public float aimSensitivity = 0.5f;
+    [SerializeField] private InputDeviceService inputDeviceService;
 
     public InputAction action;
     public float longPressThreshold = 0.5f; // seconds
@@ -30,79 +31,69 @@ public class PlayerInputs : MonoBehaviour
     private bool isPressed = false;
     private float pressStartTime;
 
-    private float lastMouseMoveTime;
-    private float lastControllerMoveTime;
-
     void Awake()
     {
+        ResolveInputDeviceService();
+
+        if (inputDeviceService == null)
+        {
+            Debug.LogError($"{nameof(PlayerInputs)} on {name} requires an active {nameof(InputDeviceService)} in scene.", this);
+            enabled = false;
+            return;
+        }
+
         // Initial device setup
-        isUsingController = Gamepad.all.Count > 0 && Gamepad.current != null;
+        inputDeviceService.RefreshFromCurrentState();
+        isUsingController = inputDeviceService.IsUsingGamepad;
     }
 
     void OnEnable()
     {
-        action.Enable();
-        action.started += OnStarted;
-        action.canceled += OnCanceled;
+        if (action != null)
+        {
+            action.Enable();
+            action.started += OnStarted;
+            action.canceled += OnCanceled;
+        }
+        else
+        {
+            Debug.LogWarning($"{nameof(PlayerInputs)} on {name} has no InputAction assigned for long/short press handling.", this);
+        }
 
-        // Register to device change events
-        InputSystem.onDeviceChange += OnDeviceChange;
+        ResolveInputDeviceService();
+
+        if (inputDeviceService == null)
+        {
+            Debug.LogError($"{nameof(PlayerInputs)} on {name} could not find {nameof(InputDeviceService)} on enable.", this);
+            enabled = false;
+            return;
+        }
+
+        inputDeviceService.DeviceTypeChanged += OnDeviceTypeChanged;
+        OnDeviceTypeChanged(inputDeviceService.CurrentDeviceType);
     }
 
     void OnDisable()
     {
-        action.started -= OnStarted;
-        action.canceled -= OnCanceled;
-        action.Disable();
+        if (action != null)
+        {
+            action.started -= OnStarted;
+            action.canceled -= OnCanceled;
+            action.Disable();
+        }
 
-        // Unregister from device change events
-        InputSystem.onDeviceChange -= OnDeviceChange;
+        if (inputDeviceService != null)
+            inputDeviceService.DeviceTypeChanged -= OnDeviceTypeChanged;
     }
 
-    void Update()
+    private void OnDeviceTypeChanged(InputDeviceType deviceType)
     {
-        // Check for mouse movement
-        if (Mouse.current != null && (Mouse.current.delta.ReadValue().sqrMagnitude > 0.1f || 
-            Mouse.current.leftButton.wasPressedThisFrame || Mouse.current.rightButton.wasPressedThisFrame))
-        {
-            lastMouseMoveTime = Time.time;
-        }
+        bool useController = deviceType == InputDeviceType.Gamepad;
+        if (isUsingController == useController)
+            return;
 
-        // Check for keyboard input
-        if (Keyboard.current != null && Keyboard.current.anyKey.isPressed)
-        {
-            lastMouseMoveTime = Time.time;
-        }
-
-        // Check for controller input
-        if (Gamepad.current != null && (
-            Gamepad.current.leftStick.ReadValue().sqrMagnitude > 0.1f || 
-            Gamepad.current.rightStick.ReadValue().sqrMagnitude > 0.1f ||
-            Gamepad.current.buttonSouth.wasPressedThisFrame || 
-            Gamepad.current.buttonEast.wasPressedThisFrame ||
-            Gamepad.current.buttonWest.wasPressedThisFrame || 
-            Gamepad.current.buttonNorth.wasPressedThisFrame))
-        {
-            lastControllerMoveTime = Time.time;
-        }
-
-        // Update the control method based on latest input
-        if (lastControllerMoveTime > lastMouseMoveTime)
-        {
-            if (!isUsingController)
-            {
-                isUsingController = true;
-                Debug.Log("Switched to controller input");
-            }
-        }
-        else if (lastMouseMoveTime > lastControllerMoveTime)
-        {
-            if (isUsingController)
-            {
-                isUsingController = false;
-                Debug.Log("Switched to keyboard/mouse input");
-            }
-        }
+        isUsingController = useController;
+        Debug.Log(isUsingController ? "Switched to controller input" : "Switched to keyboard/mouse input");
     }
 
     private void OnStarted(InputAction.CallbackContext context)
@@ -208,7 +199,6 @@ public class PlayerInputs : MonoBehaviour
                 // Adjust sensitivity for aiming with controller
                 // Example: Set sensitivity to aimSensitivity
                 // Your sensitivity adjustment logic here
-                Debug.Log("Using Controller");
             }
         }
         else
@@ -219,7 +209,6 @@ public class PlayerInputs : MonoBehaviour
                 // Reset sensitivity to normal
                 // Example: Set sensitivity to normalSensitivity
                 // Your sensitivity adjustment logic here
-                Debug.Log("Using Controller");
             }
         }
         // Debug.Log("Aim: " + aim);
@@ -251,29 +240,6 @@ public class PlayerInputs : MonoBehaviour
         //print("Jumpppp"+jump);
     }
 
-    public void OnDeviceChange(InputDevice device, InputDeviceChange change)
-    {
-        // Still keep the connection/disconnection logic
-        if (change == InputDeviceChange.Added || change == InputDeviceChange.Reconnected)
-        {
-            if (device is Gamepad)
-            {
-                // Update the timestamp but don't force controller mode
-                // just because a controller was connected
-                lastControllerMoveTime = Time.time;
-            }
-            Debug.Log("Device connected: " + device);
-        }
-        else if (change == InputDeviceChange.Removed || change == InputDeviceChange.Disconnected)
-        {
-            if (device is Gamepad && isUsingController && Gamepad.all.Count == 0)
-            {
-                isUsingController = false;
-                Debug.Log("Controller disconnected, switching to keyboard/mouse");
-            }
-        }
-    }
-
     private void OnApplicationFocus(bool hasFocus)
     {
         SetCursorState(hasFocus && cursorLocked);
@@ -282,6 +248,11 @@ public class PlayerInputs : MonoBehaviour
     private void SetCursorState(bool newState)
     {
         Cursor.lockState = newState ? CursorLockMode.Locked : CursorLockMode.None;
+    }
+
+    private void ResolveInputDeviceService()
+    {
+        if (inputDeviceService == null) inputDeviceService = InputDeviceService.Instance;
     }
 }
 
