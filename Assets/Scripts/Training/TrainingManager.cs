@@ -18,7 +18,6 @@ public class TrainingManager : MonoBehaviour
     public TrainingTrigger MeleeCollider;
     public TrainingTrigger OverheatCollider;
     
-    public TrainingDoorOpen door;
     public FadeOutTransitionScreen fadeOutTransitionScreen;
 
     void Start()
@@ -28,29 +27,21 @@ public class TrainingManager : MonoBehaviour
         Shoot.gameObject.SetActive(false);
         Melee.gameObject.SetActive(false);
         Overheat.gameObject.SetActive(false);
-    }
-    void Update()
-    {
-        HandleTrainingStep(MoveCollider, Move);
-        HandleTrainingStep(JumpCollider, Jump);
-        HandleTrainingStep(DashCollider, Dash);
-        HandleTrainingStep(ShootCollider, Shoot);
-        HandleTrainingStep(MeleeCollider, Melee);
-        HandleTrainingStep(OverheatCollider, Overheat);
 
-        if (NextCollider.stay)
+        BindTrainingStep(MoveCollider, Move);
+        BindTrainingStep(JumpCollider, Jump);
+        BindTrainingStep(DashCollider, Dash);
+        BindTrainingStep(ShootCollider, Shoot);
+        BindTrainingStep(MeleeCollider, Melee);
+        BindTrainingStep(OverheatCollider, Overheat);
+    }
+
+    private void BindTrainingStep(TrainingTrigger trigger, Image uiElement)
+    {
+        if (trigger != null && uiElement != null)
         {
-            door.OpenDoor();
-            NextCollider.stay = false;
-            NextCollider.gameObject.SetActive(false);
+            trigger.onTriggerEnterEvent.AddListener(() => uiElement.gameObject.SetActive(true));
+            trigger.onTriggerExitEvent.AddListener(() => uiElement.gameObject.SetActive(false));
         }
-
-    }
-    private void HandleTrainingStep(TrainingTrigger trigger, Image uiElement)
-    {
-        uiElement.gameObject.SetActive(trigger.stay);
     }
 }
-
-
-

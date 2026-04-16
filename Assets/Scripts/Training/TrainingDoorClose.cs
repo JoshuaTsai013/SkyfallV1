@@ -1,31 +1,31 @@
 using System.Collections;
 using UnityEngine;
 
-public class TrainingDoorOpen : MonoBehaviour
+public class TrainingDoorClose : MonoBehaviour
 {
     public AudioSource audioSource;
     public float speed = 1f;
-    public float openDuration = 2.5f; // How long the door takes to open
+    public float closeDuration = 2.5f; // How long the door takes to close
     private bool _isMoving = false;
-
-    public void OpenDoor()
+    
+    public void CloseDoor()
     {
         if (_isMoving) return;
 
-        StartCoroutine(Open());
+        StartCoroutine(Close());
         if (audioSource != null && audioSource.clip != null)
         {
             audioSource.PlayOneShot(audioSource.clip);
         }
     }
 
-    IEnumerator Open()
+    IEnumerator Close()
     {
         _isMoving = true;
         float timer = 0f;
-        while (timer < openDuration)
+        while (timer < closeDuration)
         {
-            transform.Translate(speed * Time.deltaTime * Vector3.forward);
+            transform.Translate(-1f * speed * Time.deltaTime * Vector3.forward);
             timer += Time.deltaTime;
             yield return null;
         }
