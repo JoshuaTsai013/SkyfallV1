@@ -242,12 +242,21 @@ public class PlayerInputs : MonoBehaviour
 
     private void OnApplicationFocus(bool hasFocus)
     {
-        SetCursorState(hasFocus && cursorLocked);
+        if (this.enabled) // Avoid processing when inputs are disabled e.g. menu is open
+        {
+            SetCursorState(hasFocus && cursorLocked);
+        }
     }
 
     private void SetCursorState(bool newState)
     {
-        Cursor.lockState = newState ? CursorLockMode.Locked : CursorLockMode.None;
+        if (inputDeviceService != null)
+        {
+            inputDeviceService.SetCursorState(
+                !newState,
+                newState ? CursorLockMode.Locked : CursorLockMode.None
+            );
+        }
     }
 
     private void ResolveInputDeviceService()
@@ -255,4 +264,3 @@ public class PlayerInputs : MonoBehaviour
         if (inputDeviceService == null) inputDeviceService = InputDeviceService.Instance;
     }
 }
-

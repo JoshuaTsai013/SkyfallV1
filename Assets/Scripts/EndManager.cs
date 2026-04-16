@@ -5,8 +5,13 @@ public class EndManager : MonoBehaviour
 
     private void Start()
     {
-        Cursor.lockState = CursorLockMode.None;
-        Cursor.visible = true;
+        if (InputDeviceService.Instance != null)
+            InputDeviceService.Instance.SetCursorState(true, CursorLockMode.None);
+        else
+        {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+        }
     }
     public void JumpToMainMenu()
     {

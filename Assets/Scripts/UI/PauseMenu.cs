@@ -8,6 +8,8 @@ using UnityEngine.InputSystem;
 
 public class PauseMenu : MonoBehaviour
 {
+    private static WaitForSecondsRealtime _waitForSecondsRealtime0_2 = new WaitForSecondsRealtime(0.2f);
+    private static readonly WaitForSecondsRealtime _waitForSecondsRealtime3_0 = new(3.0f);
     [SerializeField] private CanvasGroup _pauseMenuUI;
     [SerializeField] private FadeOutTransitionScreen _fadeOutTransitionScreen;
     [SerializeField] private Selectable _firstSelectedButton;
@@ -64,7 +66,7 @@ public class PauseMenu : MonoBehaviour
     private IEnumerator ToggleDelay()
     {
         _canToggle = false; // Disable toggling
-        yield return new WaitForSecondsRealtime(0.2f); // Wait for 0.2 seconds in real-time
+        yield return _waitForSecondsRealtime0_2; // Wait for 0.2 seconds in real-time
         _canToggle = true; // Enable toggling
     }
     public void OpenPauseMenu()
@@ -80,8 +82,8 @@ public class PauseMenu : MonoBehaviour
         _playerController.enabled = false;
         _playerShooterController.enabled = false;
         _pauseMenuUI.DOFade(1, 0.05f);
-        Cursor.visible = true;
-        Cursor.lockState = CursorLockMode.None;
+        if (InputDeviceService.Instance != null)
+            InputDeviceService.Instance.SetCursorState(true, CursorLockMode.None);
         Time.timeScale = 0.1f;
         _pauseMenuUI.gameObject.SetActive(true);
         _isPaused = true;
@@ -99,11 +101,11 @@ public class PauseMenu : MonoBehaviour
     private IEnumerator ReapplyPauseCursorNextFrame()
     {
         // Reapply once immediately and once next frame in case another script overrides cursor state on focus regain.
-        Cursor.visible = true;
-        Cursor.lockState = CursorLockMode.None;
+        if (InputDeviceService.Instance != null)
+            InputDeviceService.Instance.SetCursorState(true, CursorLockMode.None);
         yield return null;
-        Cursor.visible = true;
-        Cursor.lockState = CursorLockMode.None;
+        if (InputDeviceService.Instance != null)
+            InputDeviceService.Instance.SetCursorState(true, CursorLockMode.None);
     }
 
     public void ClosePauseMenu()
@@ -116,8 +118,8 @@ public class PauseMenu : MonoBehaviour
         // _playerInput.SwitchCurrentActionMap("Player"); // Switch back to the player action map
         _playerShooterController.enabled = true;
         _pauseMenuUI.DOFade(0, 0.05f);
-        Cursor.visible = false;
-        Cursor.lockState = CursorLockMode.Locked;
+        if (InputDeviceService.Instance != null)
+            InputDeviceService.Instance.SetCursorState(false, CursorLockMode.Locked);
         Time.timeScale = 1.0f;
         StartCoroutine(ResumeGameDelay());
         _pauseMenuUI.gameObject.SetActive(false);
@@ -152,7 +154,7 @@ public class PauseMenu : MonoBehaviour
     {
         ClosePauseMenu();
         _fadeOutTransitionScreen.FadeIn();
-        yield return new WaitForSecondsRealtime(3.0f); // Wait for 0.2 seconds in real-time
+        yield return _waitForSecondsRealtime3_0;
         SceneManager.LoadScene(0);
         // Application.Quit();
     }

@@ -8,6 +8,7 @@ using UnityEngine.VFX;
 
 public class LoadingScreen : MonoBehaviour
 {
+    private static readonly WaitForSecondsRealtime _waitForSecondsRealtime3_0 = new(3.0f);
     public CanvasGroup loadingScreen;
     public CanvasGroup loadingText;
     public VisualEffect loadingVfx;
@@ -20,6 +21,14 @@ public class LoadingScreen : MonoBehaviour
 
     private void Start()
     {
+        if (InputDeviceService.Instance != null)
+            InputDeviceService.Instance.SetCursorState(true, CursorLockMode.None);
+        else
+        {
+            Cursor.visible = true;
+            Cursor.lockState = CursorLockMode.None;
+        }
+
         RunTitle(destroyCancellationToken).Forget();
         loadingVfx.Stop();
     }
@@ -39,8 +48,14 @@ public class LoadingScreen : MonoBehaviour
     }
     async UniTask RunToLoading(CancellationToken cancellation)
     {
-        Cursor.visible = false;
-        Cursor.lockState = CursorLockMode.Locked;
+        if (InputDeviceService.Instance != null)
+            InputDeviceService.Instance.SetCursorState(false, CursorLockMode.Locked);
+        else
+        {
+            Cursor.visible = false;
+            Cursor.lockState = CursorLockMode.Locked;
+        }
+
         StartParticles.Stop();
         StartText.DOFade(0, 0.6f);
         Title.DOFade(0, 1f);
@@ -66,7 +81,7 @@ public class LoadingScreen : MonoBehaviour
     {
         Title.DOFade(0, 0.5f);
         StartText.DOFade(0, 0.5f);
-        yield return new WaitForSecondsRealtime(3.0f); // Wait for 0.2 seconds in real-time
+        yield return _waitForSecondsRealtime3_0;
         Application.Quit();
     }
 }

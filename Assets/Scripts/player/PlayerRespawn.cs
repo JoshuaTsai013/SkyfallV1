@@ -90,8 +90,8 @@ public class PlayerRespawn : MonoBehaviour
 
     public void Respawn()
     {
-        Cursor.visible = false;
-        Cursor.lockState = CursorLockMode.Locked;
+        if (InputDeviceService.Instance != null)
+            InputDeviceService.Instance.SetCursorState(false, CursorLockMode.Locked);
         StartCoroutine(RespawnDelay());
     }
     private IEnumerator RespawnDelay()
@@ -145,8 +145,8 @@ public class PlayerRespawn : MonoBehaviour
         }
         Instantiate(destroyedMech, transform.position, transform.rotation);
         _dieScreen.ShowDieScreen();
-        Cursor.visible = true;
-        Cursor.lockState = CursorLockMode.None;
+        if (InputDeviceService.Instance != null)
+            InputDeviceService.Instance.SetCursorState(true, CursorLockMode.None);
         EventSystem.current.SetSelectedGameObject(_firstSelectedButton.gameObject);
     }
 

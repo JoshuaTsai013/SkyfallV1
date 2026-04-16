@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Events;
 
 public enum InputDeviceType
 {
@@ -20,10 +21,17 @@ public class InputDeviceService : MonoBehaviour
     [Header("Debug")]
     public bool isUsingGamepad;
 
+    [Header("Events")]
+    public UnityEvent onSwitchedToGamepad;
+
     public InputDeviceType CurrentDeviceType { get; private set; } = InputDeviceType.KeyboardMouse;
     public bool IsUsingGamepad => CurrentDeviceType == InputDeviceType.Gamepad;
 
     public event Action<InputDeviceType> DeviceTypeChanged;
+
+    // Cursor State Management
+    private bool _requestedCursorVisible = false;
+    private CursorLockMode _requestedCursorLockMode = CursorLockMode.Locked;
 
     private void Awake()
     {
@@ -35,7 +43,7 @@ public class InputDeviceService : MonoBehaviour
 
         Instance = this;
 
-        if (playerInput == null)
+        if (playerInput == null && PlayerManager.instance != null && PlayerManager.instance.player != null)
             playerInput = PlayerManager.instance.player.GetComponent<PlayerInput>();
     }
 
@@ -54,6 +62,9 @@ public class InputDeviceService : MonoBehaviour
         }
 
         InputSystem.onDeviceChange += OnDeviceChange;
+        
+        // Detect input across the entire application even if no PlayerInput is assigned (great for UI-only scenes)
+        // InputSystem.onAnyButtonPress += OnAnyButtonPress;
         RefreshFromCurrentState();
     }
 
@@ -71,9 +82,23 @@ public class InputDeviceService : MonoBehaviour
         }
 
         InputSystem.onDeviceChange -= OnDeviceChange;
+        // InputSystem.onAnyButtonPress -= OnAnyButtonPress;
 
         if (Instance == this)
             Instance = null;
+    }
+
+    private void OnAnyButtonPress(InputControl control)
+    {
+        // Detect device type globally from any button press
+        if (control.device is Gamepad)
+        {
+            SetDeviceType(InputDeviceType.Gamepad);
+        }
+        else if (control.device is Keyboard || control.device is Mouse)
+        {
+            SetDeviceType(InputDeviceType.KeyboardMouse);
+        }
     }
 
     private void OnActionPerformed(InputAction.CallbackContext context)
@@ -160,9 +185,39 @@ public class InputDeviceService : MonoBehaviour
         if (CurrentDeviceType == newType)
             return;
 
+        bool wasKeyboard = CurrentDeviceType == InputDeviceType.KeyboardMouse;
+
         Debug.Log($"[InputDeviceService] Device type changed: {CurrentDeviceType} -> {newType}");
         CurrentDeviceType = newType;
         isUsingGamepad = newType == InputDeviceType.Gamepad;
         DeviceTypeChanged?.Invoke(CurrentDeviceType);
+
+        if (wasKeyboard && newType == InputDeviceType.Gamepad)
+        {
+            onSwitchedToGamepad?.Invoke();
+        }
+
+        ApplyCursorState();
+    }
+
+    public void SetCursorState(bool visible, CursorLockMode lockMode)
+    {
+        _requestedCursorVisible = visible;
+        _requestedCursorLockMode = lockMode;
+        ApplyCursorState();
+    }
+
+    private void ApplyCursorState()
+    {
+        if (IsUsingGamepad)
+        {
+            Cursor.visible = false;
+            Cursor.lockState = CursorLockMode.Locked;
+        }
+        else
+        {
+            Cursor.visible = _requestedCursorVisible;
+            Cursor.lockState = _requestedCursorLockMode;
+        }
     }
 }
