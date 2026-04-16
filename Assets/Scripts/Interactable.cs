@@ -46,10 +46,10 @@ public class Interactable : MonoBehaviour
             PlayerInputs _inputs = other.GetComponent<PlayerInputs>(); // Call the Interact method on the player inputs script
             if (_inputs == null || !_inputs.interact) // Check if the player has the PlayerInputs component and is interacting
             {
-                Debug.Log("Interactable Not Doing: "); // Log the interaction for debugging
+                // Debug.Log("Interactable Not Doing: "); // Log the interaction for debugging
                 return;
             }
-            Debug.Log("Interactable Triggered: " + _interactableType); // Log the interaction for debugging
+            // Debug.Log("Interactable Triggered: " + _interactableType); // Log the interaction for debugging
             _Text.SetActive(false); // Hide the text object after interaction
             switch (_interactableType)
             {

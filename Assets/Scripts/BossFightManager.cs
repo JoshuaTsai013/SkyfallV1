@@ -13,7 +13,8 @@ public class BossFightManager : MonoBehaviour
     [SerializeField] private CharacterGeneral _boss;
     [SerializeField] private FadeOutTransitionScreen _fadeOutTransitionScreen;
     [SerializeField] private AudioSource _bossMusic;
-    [SerializeField] private Transform _playerRespawnPoint; // Arena entrance — assign in Inspector
+    [SerializeField] private ParticleSystem _bossAreaSmoke;
+    [SerializeField] private Transform _playerRespawnPoint;
     private CharacterGeneral _characterGeneral;
     private bool _showBloodBar = false;
     private bool _isBossDead = false;
@@ -65,6 +66,7 @@ public class BossFightManager : MonoBehaviour
             BossBloodBar.DOFade(1, 2f);
             _showBloodBar = true;
             _bossMusic.Play();
+            _bossAreaSmoke.Play();
             _aimbot.targetOffset = new Vector3(0, 8.3f, 0);
             _aimbot.screenScanRadius = 0.5f;
 
@@ -137,6 +139,7 @@ public class BossFightManager : MonoBehaviour
         // Stop music
         _bossMusic.Stop();
         _bossMusic.time = 0f;
+        _bossAreaSmoke.Stop();
 
         // Hide blood bar
         BossBloodBar.DOKill();

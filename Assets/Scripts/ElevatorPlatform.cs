@@ -1,12 +1,11 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class ElevatorPlatform : MonoBehaviour
 {
     [SerializeField]
-    private GameObject _upText; // Reference to the text object for displaying messages
-    [SerializeField]
-    private GameObject _downText; // Reference to the text object for displaying messages
+    private Image _useElevatorText; // Reference to the text object for displaying messages
     [SerializeField]
     private bool _isUsed = false; // Flag to check if the elevator has been used
     [SerializeField]
@@ -18,8 +17,8 @@ public class ElevatorPlatform : MonoBehaviour
     [SerializeField] private float ascendDuration = 3f; // Total flight duration
     private float _currentTime; // Tracks elapsed time
     private Vector3 _initialPosition; // Store the initial position for descent
-    private bool _isAtTop = false; // Track if elevator is at the top
-    private bool _isMoving = false; // Track if elevator is currently moving
+    [SerializeField] private bool _isAtTop = false; // Track if elevator is at the top
+    [SerializeField] private bool _isMoving = false; // Track if elevator is currently moving
 
     private void Start()
     {
@@ -34,17 +33,7 @@ public class ElevatorPlatform : MonoBehaviour
             // Only show text if elevator isn't currently moving
             if (!_isMoving)
             {
-                // Show appropriate text based on elevator position
-                if (_isAtTop)
-                {
-                    _downText.SetActive(true);
-                    _upText.SetActive(false);
-                }
-                else
-                {
-                    _upText.SetActive(true);
-                    _downText.SetActive(false);
-                }
+                _useElevatorText.gameObject.SetActive(true);
             }
 
             PlayerInputs _inputs = other.GetComponent<PlayerInputs>(); // Get player inputs
@@ -54,8 +43,7 @@ public class ElevatorPlatform : MonoBehaviour
             }
 
             // Hide both text objects after interaction
-            _upText.SetActive(false);
-            _downText.SetActive(false);
+            _useElevatorText.gameObject.SetActive(false);
 
             if (!_isAtTop) // Elevator is at the bottom
             {
@@ -77,8 +65,7 @@ public class ElevatorPlatform : MonoBehaviour
         Debug.Log("Elevator Ascending");
         _isMoving = true; // Mark as moving
         // Hide both text objects during movement
-        _upText.SetActive(false);
-        _downText.SetActive(false);
+        _useElevatorText.gameObject.SetActive(false);
 
         _currentTime = 0f; // Reset timer for ascent
 
@@ -114,8 +101,7 @@ public class ElevatorPlatform : MonoBehaviour
         Debug.Log("Elevator Descending");
         _isMoving = true; // Mark as moving
         // Hide both text objects during movement
-        _upText.SetActive(false);
-        _downText.SetActive(false);
+        _useElevatorText.gameObject.SetActive(false);
 
         _currentTime = 0f; // Reset timer for descent
 
@@ -147,8 +133,7 @@ public class ElevatorPlatform : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             // Hide both text objects when player leaves
-            _upText.SetActive(false);
-            _downText.SetActive(false);
+            _useElevatorText.gameObject.SetActive(false);
         }
     }
 }
