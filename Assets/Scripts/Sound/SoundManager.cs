@@ -12,6 +12,7 @@ public enum SoundType
     Reload,
     Engine,
     Explosion,
+    MissileLaunch,
 }
 
 [RequireComponent(typeof(AudioSource))]

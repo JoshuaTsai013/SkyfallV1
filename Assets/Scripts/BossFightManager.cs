@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using DG.Tweening;
 using UnityEngine;
@@ -6,7 +7,7 @@ using UnityEngine.UI;
 
 public class BossFightManager : MonoBehaviour
 {
-    private static WaitForSecondsRealtime _waitForSecondsRealtime3_0 = new(3.0f);
+    private static WaitForSecondsRealtime _waitForSecondsRealtime5_0 = new(5.0f);
     private static WaitForSecondsRealtime _waitForSecondsRealtime1 = new(1f);
     public CanvasGroup BossBloodBar;
     public Image BloodBarFill;
@@ -15,6 +16,9 @@ public class BossFightManager : MonoBehaviour
     [SerializeField] private AudioSource _bossMusic;
     [SerializeField] private ParticleSystem _bossAreaSmoke;
     [SerializeField] private Transform _playerRespawnPoint;
+    [SerializeField] private GameObject AmmoKit;
+    [SerializeField] private GameObject RepairKit;
+
     private CharacterGeneral _characterGeneral;
     private bool _showBloodBar = false;
     private bool _isBossDead = false;
@@ -75,7 +79,7 @@ public class BossFightManager : MonoBehaviour
             {
                 _characterGeneral.OnDie.AddListener(PlayerDie);
             }
-            Debug.Log("Boss Fight Started!");
+            // Debug.Log("Boss Fight Started!");
         }
     }
 
@@ -98,13 +102,17 @@ public class BossFightManager : MonoBehaviour
     private void HandleDie()
     {
         _isBossDead = true;
+         if (_characterGeneral)
+            {
+                _characterGeneral.currentHealth = 100f;
+            }
         StartCoroutine(EndGameDelay());
     }
 
     // Handle player death: wait 1 seconds then restore pre-fight state
     private void PlayerDie()
     {
-        Debug.Log("Player died during boss fight - resetting boss fight in 1 seconds");
+        // Debug.Log("Player died during boss fight - resetting boss fight in 1 seconds");
 
         // Unsubscribe immediately to prevent duplicate calls
         if (_characterGeneral != null)
@@ -147,19 +155,26 @@ public class BossFightManager : MonoBehaviour
         BossBloodBar.gameObject.SetActive(false);
         BloodBarFill.fillAmount = 1f;
 
+        // respawn ammo box and health pack
+        Instantiate(AmmoKit, new Vector3(348,401,269), Quaternion.identity);
+        Instantiate(RepairKit, new Vector3(344,401,260.6f), Quaternion.identity);
+        
         // Reset flags — allow OnTriggerEnter to fire again
         _showBloodBar = false;
         _isBossDead = false;
 
-        // DO NOT clear spawn override here — player hasn't respawned yet
-        // Override is cleared only when player re-enters the arena in OnTriggerEnter
+    }
+
+    private Vector3 Vector3(double v1, double v2, double v3)
+    {
+        throw new NotImplementedException();
     }
 
     private IEnumerator EndGameDelay()
     {
         BossBloodBar.DOFade(0, 0.2f);
         _fadeOutTransitionScreen.FadeIn();
-        yield return _waitForSecondsRealtime3_0;
+        yield return _waitForSecondsRealtime5_0;
         SceneManager.LoadScene(4);
     }
 }

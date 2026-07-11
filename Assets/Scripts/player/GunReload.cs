@@ -30,7 +30,7 @@ public class GunReload : MonoBehaviour
         {
             return;
         }
-        SoundManager.PlaySound(SoundType.Reload, 0.4f);
+        SoundManager.PlaySound(SoundType.Reload, 0.3f);
         // Start reloading
         StartReload(destroyCancellationToken).Forget();
         _ReloadHintText.SetActive(false);

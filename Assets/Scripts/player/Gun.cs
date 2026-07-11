@@ -50,7 +50,7 @@ public class Gun : MonoBehaviour
         {
             if (!_emptySoundPlayed && _playerStats.IsReloading == false)
             {
-                SoundManager.PlaySound(SoundType.EmptyShell, 0.15f);
+                SoundManager.PlaySound(SoundType.EmptyShell, 0.12f);
                 _emptySoundPlayed = true;
                 StartCoroutine(ResetEmptySoundPlayed());
             }
@@ -60,7 +60,7 @@ public class Gun : MonoBehaviour
         {
             ShootingSystem.Play();
             _crosshair.AnimatedCrosshairFire();
-            SoundManager.PlaySound(SoundType.SingleShot, 0.1f);
+            SoundManager.PlaySound(SoundType.SingleShot, 0.085f);
             PlayBulletShell();
             _playerStats.AmmoAmount--;
 

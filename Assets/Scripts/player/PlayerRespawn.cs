@@ -113,6 +113,7 @@ public class PlayerRespawn : MonoBehaviour
         // Reset player state
         _isDied = false;
         characterGeneral.currentHealth = characterGeneral.maxHealth;
+        
 
         // Enable player controls and show model only after position is set
         EnablePlayerControl();
